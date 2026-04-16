@@ -5,7 +5,7 @@
     "messageTR": "Günlük harcama takibi, düzenleme ve bildirim düzeltmesi eklendi.",
     "messageEN": "Daily expense tracking, editing and notification fix added.",
     "icon": "megaphone.fill",
-    "active": false
+    "active": true
   },
   "promo": {
     "code": "YULA",
@@ -17,6 +17,6 @@
     "textTR": "Bizi Instagram'da takip edin!",
     "textEN": "Follow us on Instagram!",
     "url": "https://instagram.com/yula_.app",
-    "active": false
+    "active": true
   }
 }
