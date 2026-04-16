@@ -8,7 +8,7 @@
       "messageEN": "Daily expense tracking, editing and notification fix added.",
       "icon": "megaphone.fill",
       "color": "blue",
-      "active": true
+      "active": false
     },
     {
       "type": "promo",
