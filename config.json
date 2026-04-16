@@ -1,0 +1,22 @@
+{
+  "announcement": {
+    "titleTR": "Yula v2.0.3 Yayında!",
+    "titleEN": "Yula v2.0.3 is Live!",
+    "messageTR": "Günlük harcama takibi, düzenleme ve bildirim düzeltmesi eklendi.",
+    "messageEN": "Daily expense tracking, editing and notification fix added.",
+    "icon": "megaphone.fill",
+    "active": true
+  },
+  "promo": {
+    "code": "YULA50",
+    "textTR": "Premium %50 indirim!",
+    "textEN": "Premium 50% off!",
+    "active": false
+  },
+  "banner": {
+    "textTR": "Bizi Instagram'da takip edin!",
+    "textEN": "Follow us on Instagram!",
+    "url": "https://instagram.com/yula_.app",
+    "active": true
+  }
+}
