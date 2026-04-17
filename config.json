@@ -14,7 +14,7 @@
       "type": "promo",
       "titleTR": "Premium %50 indirim!",
       "titleEN": "Premium 50% off!",
-      "code": "YULA50",
+      "code": "YULA",
       "icon": "gift.fill",
       "color": "green",
       "active": true
@@ -27,6 +27,15 @@
       "icon": "camera.fill",
       "color": "orange",
       "active": false
+    },
+    {
+      "type": "link",
+      "titleTR": "Reklam ve İşbirliği",
+      "titleEN": "Advertising & Partnership",
+      "url": "mailto:yula.app.destek@gmail.com",
+      "icon": "envelope.fill",
+      "color": "purple",
+      "active": true
     }
   ]
 }
