@@ -20,6 +20,17 @@
       "active": true
     },
     {
+  "type": "link",
+  "titleTR": "Yula'yı beğendin mi? ⭐",
+  "titleEN": "Enjoying Yula? ⭐",
+  "messageTR": "1 dakikanda büyümemize yardımcı ol",
+  "messageEN": "Help us grow with a quick review",
+  "url": "https://apps.apple.com/app/id6759402076?action=write-review",
+  "icon": "star.bubble.fill",
+  "color": "yellow",
+  "active": true
+},
+    {
       "type": "link",
       "titleTR": "Bizi Instagram'da takip edin!",
       "titleEN": "Follow us on Instagram!",
