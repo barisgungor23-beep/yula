@@ -47,7 +47,7 @@
   "messageEN": "Premium users discover $50/month in savings on average. You're still not seeing yours.",
   "icon": "eye.trianglebadge.exclamationmark.fill",
   "color": "red",
-  "active": false
+  "active": true
 },
     {
       "type": "link",
