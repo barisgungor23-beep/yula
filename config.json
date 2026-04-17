@@ -40,6 +40,16 @@
       "active": false
     },
     {
+  "type": "tip",
+  "titleTR": "📉 Kaçırdığın tasarruf",
+  "titleEN": "📉 The savings you're missing",
+  "messageTR": "Premium kullanıcılar ortalama ₺200/ay tasarruf keşfediyor. Sen hâlâ görmüyorsun.",
+  "messageEN": "Premium users discover $50/month in savings on average. You're still not seeing yours.",
+  "icon": "eye.trianglebadge.exclamationmark.fill",
+  "color": "red",
+  "active": false
+},
+    {
       "type": "link",
       "titleTR": "Reklam ve İşbirliği",
       "titleEN": "Advertising & Partnership",
