@@ -12,8 +12,8 @@
     },
     {
       "type": "promo",
-      "titleTR": "Premium %50 indirim!",
-      "titleEN": "Premium 50% off!",
+      "titleTR": "Premium %50 indirim fırsatı!",
+      "titleEN": "Premium 50% off Change!",
       "code": "YULA",
       "icon": "gift.fill",
       "color": "green",
@@ -23,7 +23,7 @@
   "type": "link",
   "titleTR": "Yula'yı beğendin mi? ⭐",
   "titleEN": "Enjoying Yula? ⭐",
-  "messageTR": "1 dakikanda büyümemize yardımcı ol",
+  "messageTR": "1 dakikada büyümemize yardımcı ol",
   "messageEN": "Help us grow with a quick review",
   "url": "https://apps.apple.com/app/id6759402076?action=write-review",
   "icon": "star.bubble.fill",
@@ -47,7 +47,7 @@
   "messageEN": "Premium users discover $50/month in savings on average. You're still not seeing yours.",
   "icon": "eye.trianglebadge.exclamationmark.fill",
   "color": "red",
-  "active": true
+  "active": false
 },
     {
       "type": "link",
