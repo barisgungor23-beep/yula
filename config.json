@@ -13,22 +13,15 @@
     },
     {
       "id": "promo_yula",
-  "type": "promo",
-  "titleTR": "Premium %50 İndirim!",
-  "titleEN": "50% Off Premium!",
-  "messageTR": "Sınırlı süre — kod: YULA",
-  "messageEN": "Limited time — code: YULA",
-  "code": "YULA",
-  "icon": "gift.fill",
-  "color": "green",
-  "active": true,
-  "style": {
-    "size": "medium",
-    "layout": "horizontal",
-    "bgColor": "green",
-    "cornerRadius": 20,
-    "showMessage": true,
-    "animation": "shimmer"
+      "type": "promo",
+      "titleTR": "⏰ Premium %50 İndirim — Sınırlı Süre!",
+      "titleEN": "⏰ 50% Off Premium — Limited Time!",
+      "messageTR": "Bu fırsat her an sona erebilir. Kod: YULA",
+      "messageEN": "This offer could end anytime. Code: YULA",
+      "code": "YULA",
+      "icon": "gift.fill",
+      "color": "green",
+      "active": true
     },
     {
       "id": "review_yula",
@@ -41,18 +34,6 @@
       "icon": "star.bubble.fill",
       "color": "yellow",
       "active": true
-    },
-    {
-      "id": "instagram_yula",
-      "type": "link",
-      "titleTR": "Bizi Instagram'da takip edin!",
-      "titleEN": "Follow us on Instagram!",
-      "messageTR": "",
-      "messageEN": "",
-      "url": "https://instagram.com/yula_.app",
-      "icon": "camera.fill",
-      "color": "orange",
-      "active": false
     },
     {
       "id": "tip_savings",
