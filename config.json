@@ -1,6 +1,7 @@
 {
   "cards": [
     {
+      "id": "version_203",
       "type": "announcement",
       "titleTR": "Yula v2.0.3 Yayında!",
       "titleEN": "Yula v2.0.3 is Live!",
@@ -11,48 +12,59 @@
       "active": false
     },
     {
+      "id": "promo_yula",
       "type": "promo",
-      "titleTR": "Premium %50 indirim fırsatı!",
-      "titleEN": "Premium 50% off Change!",
+      "titleTR": "Premium %50 İndirim!",
+      "titleEN": "50% Off Premium!",
+      "messageTR": "Sınırlı süre — kod: YULA",
+      "messageEN": "Limited time — code: YULA",
       "code": "YULA",
       "icon": "gift.fill",
       "color": "green",
       "active": true
     },
     {
-  "type": "link",
-  "titleTR": "Yula'yı beğendin mi? ⭐",
-  "titleEN": "Enjoying Yula? ⭐",
-  "messageTR": "1 dakikada büyümemize yardımcı ol",
-  "messageEN": "Help us grow with a quick review",
-  "url": "https://apps.apple.com/app/id6759402076?action=write-review",
-  "icon": "star.bubble.fill",
-  "color": "yellow",
-  "active": true
-},
+      "id": "review_yula",
+      "type": "link",
+      "titleTR": "Yula'yı beğendin mi?",
+      "titleEN": "Enjoying Yula?",
+      "messageTR": "1 dakikada büyümemize yardımcı ol",
+      "messageEN": "Help us grow with a quick review",
+      "url": "https://apps.apple.com/app/id6759402076?action=write-review",
+      "icon": "star.bubble.fill",
+      "color": "yellow",
+      "active": true
+    },
     {
+      "id": "instagram_yula",
       "type": "link",
       "titleTR": "Bizi Instagram'da takip edin!",
       "titleEN": "Follow us on Instagram!",
+      "messageTR": "",
+      "messageEN": "",
       "url": "https://instagram.com/yula_.app",
       "icon": "camera.fill",
       "color": "orange",
       "active": false
     },
     {
-  "type": "tip",
-  "titleTR": "📉 Kaçırdığın tasarruf",
-  "titleEN": "📉 The savings you're missing",
-  "messageTR": "Premium kullanıcılar ortalama ₺200/ay tasarruf keşfediyor. Sen hâlâ görmüyorsun.",
-  "messageEN": "Premium users discover $50/month in savings on average. You're still not seeing yours.",
-  "icon": "eye.trianglebadge.exclamationmark.fill",
-  "color": "red",
-  "active": false
-},
+      "id": "tip_savings",
+      "type": "tip",
+      "titleTR": "Kaçırdığın tasarruf",
+      "titleEN": "The savings you're missing",
+      "messageTR": "Premium kullanıcılar ortalama ₺200/ay tasarruf keşfediyor. Sen hâlâ görmüyorsun.",
+      "messageEN": "Premium users discover $50/month in savings on average. You're still not seeing yours.",
+      "icon": "eye.trianglebadge.exclamationmark.fill",
+      "color": "red",
+      "active": false
+    },
     {
+      "id": "contact_yula",
       "type": "link",
       "titleTR": "Reklam ve İşbirliği",
       "titleEN": "Advertising & Partnership",
+      "messageTR": "Bizimle iletişime geç",
+      "messageEN": "Get in touch with us",
       "url": "mailto:yula.app.destek@gmail.com",
       "icon": "envelope.fill",
       "color": "purple",
