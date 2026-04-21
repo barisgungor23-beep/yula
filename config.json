@@ -13,15 +13,22 @@
     },
     {
       "id": "promo_yula",
-      "type": "promo",
-      "titleTR": "Premium %50 İndirim!",
-      "titleEN": "50% Off Premium!",
-      "messageTR": "Sınırlı süre — kod: YULA",
-      "messageEN": "Limited time — code: YULA",
-      "code": "YULA",
-      "icon": "gift.fill",
-      "color": "green",
-      "active": true
+  "type": "promo",
+  "titleTR": "Premium %50 İndirim!",
+  "titleEN": "50% Off Premium!",
+  "messageTR": "Sınırlı süre — kod: YULA",
+  "messageEN": "Limited time — code: YULA",
+  "code": "YULA",
+  "icon": "gift.fill",
+  "color": "green",
+  "active": true,
+  "style": {
+    "size": "medium",
+    "layout": "horizontal",
+    "bgColor": "green",
+    "cornerRadius": 20,
+    "showMessage": true,
+    "animation": "shimmer"
     },
     {
       "id": "review_yula",
