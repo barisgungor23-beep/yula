@@ -33,7 +33,7 @@
       "url": "https://apps.apple.com/app/id6759402076?action=write-review",
       "icon": "star.bubble.fill",
       "color": "yellow",
-      "active": true
+      "active": false
     },
     {
       "id": "tip_savings",
