@@ -15,7 +15,7 @@
       "id": "promo_yula",
       "type": "promo",
       "titleTR": "⏰ Premium %40 İndirim — Sınırlı Süre!",
-      "titleEN": "⏰ 50% Off Premium — Limited Time!",
+      "titleEN": "⏰ 40% Off Premium — Limited Time!",
       "messageTR": "Bu fırsat her an sona erebilir. Kod: YULA",
       "messageEN": "This offer could end anytime. Code: YULA",
       "code": "YULA",
@@ -56,7 +56,7 @@
       "url": "mailto:yula.app.destek@gmail.com",
       "icon": "envelope.fill",
       "color": "purple",
-      "active": true
+      "active": false
     }
   ]
 }
