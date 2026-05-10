@@ -9,6 +9,7 @@
       "messageEN": "Daily expense tracking, editing and notification fix added.",
       "icon": "megaphone.fill",
       "color": "blue",
+      "placement": "home",
       "active": false
     },
     {
@@ -21,6 +22,7 @@
       "code": "YULA",
       "icon": "gift.fill",
       "color": "green",
+      "placement": "home",
       "active": true
     },
     {
@@ -33,6 +35,7 @@
       "url": "https://apps.apple.com/app/id6759402076?action=write-review",
       "icon": "star.bubble.fill",
       "color": "yellow",
+      "placement": "settings",
       "active": false
     },
     {
@@ -44,6 +47,7 @@
       "messageEN": "Premium users discover $50/month in savings on average. You're still not seeing yours.",
       "icon": "eye.trianglebadge.exclamationmark.fill",
       "color": "red",
+      "placement": "home",
       "active": false
     },
     {
@@ -56,6 +60,7 @@
       "url": "mailto:yula.app.destek@gmail.com",
       "icon": "envelope.fill",
       "color": "purple",
+      "placement": "settings",
       "active": false
     }
   ]
