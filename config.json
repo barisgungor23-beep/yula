@@ -13,17 +13,17 @@
       "active": false
     },
     {
-      "id": "promo_yula",
-      "type": "promo",
-      "titleTR": "⏰ Premium %40 İndirim — Sınırlı Süre!",
-      "titleEN": "⏰ 40% Off Premium — Limited Time!",
-      "messageTR": "Bu fırsat her an sona erebilir. Kod: YULA",
-      "messageEN": "This offer could end anytime. Code: YULA",
-      "code": "YULA",
-      "icon": "gift.fill",
-      "color": "green",
-      "placement": "home",
-      "active": true
+     "id": "promo_applyra",
+     "type": "promo",
+     "titleTR": "🎯 Applyra %50 İndirim — İlk Ay Yarı Fiyat",
+     "titleEN": "🎯 50% Off Applyra — Half Price First Month",
+     "messageTR": "ASO ve anahtar kelime takibi için solo developer aracı. Kod: APPCONSOL",
+     "messageEN": "ASO and keyword tracking tool built for solo devs. Code: APPCONSOL",
+     "code": "APPCONSOL",
+     "icon": "magnifyingglass.circle.fill",
+     "color": "purple",
+     "placement": "home",
+     "active": false
     },
     {
       "id": "review_yula",
