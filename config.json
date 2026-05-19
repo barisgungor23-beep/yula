@@ -22,7 +22,7 @@
       "icon": "gift.fill",
       "color": "green",
       "placement": "home",
-      "active": true
+      "active": false
     },
     {
       "id": "review_yula",
