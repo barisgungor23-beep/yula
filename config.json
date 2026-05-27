@@ -20,7 +20,7 @@
       "messageEN": "This offer could end anytime. Code: 1LIFETIME",
       "code": "1LIFETIME",
       "icon": "gift.fill",
-      "color": "green",
+      "color": "yellow",
       "placement": "home",
       "active": true
     },
