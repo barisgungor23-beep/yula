@@ -14,15 +14,15 @@
     },
     {
       "type": "promo",
-      "titleTR": "⏰ Premium %40 İndirim — Sınırlı Süre!",
-      "titleEN": "⏰ 40% Off Premium — Limited Time!",
-      "messageTR": "Bu fırsat her an sona erebilir. Kod: YULA",
-      "messageEN": "This offer could end anytime. Code: YULA",
+      "titleTR": "⏰ Premium 1$ — Sınırlı Süre!",
+      "titleEN": "⏰ 1$ Premium — Limited Time!",
+      "messageTR": "Bu fırsat her an sona erebilir. Kod: 1LIFETIME",
+      "messageEN": "This offer could end anytime. Code: 1LIFETIME",
       "code": "YULA",
       "icon": "gift.fill",
       "color": "green",
       "placement": "home",
-      "active": false
+      "active": true
     },
     {
       "id": "review_yula",
