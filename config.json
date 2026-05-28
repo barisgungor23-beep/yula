@@ -26,17 +26,17 @@
     },
     {
       "id": "crosspromo_personalcapsule",
-      "type": "link",
-      "titleTR": "Yeni Uygulamam: PersonalCapsule 🎁",
-      "titleEN": "My New App: PersonalCapsule 🎁",
-      "messageTR": "Kararlarını mühürle, gelecekteki seninle buluş. APPHOOKUP kodu ile sadece 1$!",
-      "messageEN": "Seal your decisions, meet your future self. Just $1 with code APPHOOKUP!",
-      "url": "https://apps.apple.com/app/id6773064012",
-      "code": "APPHOOKUP",
-      "icon": "shippingbox.fill",
-      "color": "purple",
-      "placement": "home",
-      "active": true
+  "type": "link",
+  "titleTR": "Yeni Uygulamam PersonalCapsule — APPHOOKUP kodu ile 1$",
+  "titleEN": "My New App PersonalCapsule — $1 with code APPHOOKUP",
+  "messageTR": "Kararlarını mühürle, gelecekteki seninle buluş.",
+  "messageEN": "Seal your decisions, meet your future self.",
+  "url": "https://apps.apple.com/app/id6773064012",
+  "code": "APPHOOKUP",
+  "icon": "shippingbox.fill",
+  "color": "purple",
+  "placement": "home",
+  "active": true
     },
     {
       "id": "review_yula",
