@@ -228,18 +228,18 @@ function fireworks() {
     var cy = 15 + Math.random() * 30;
     var delay = burst * 400;
     for (var i = 0; i < 20; i++) {
+      var color = colors[Math.floor(Math.random() * colors.length)];
       var el = document.createElement('div');
-      el.style.cssText = 'position:fixed;width:4px;height:4px;border-radius:50%;z-index:9998;pointer-events:none;';
+      el.style.cssText = 'position:fixed;width:4px;height:4px;border-radius:50%;z-index:9998;pointer-events:none;opacity:1;';
       el.style.left = cx + 'vw';
       el.style.top = cy + 'vh';
-      el.style.background = colors[Math.floor(Math.random() * colors.length)];
-      el.style.boxShadow = '0 0 6px ' + el.style.background;
+      el.style.background = color;
+      el.style.boxShadow = '0 0 6px ' + color;
       var angle = (Math.PI * 2 / 20) * i;
       var dist = 80 + Math.random() * 120;
       var dx = Math.cos(angle) * dist;
       var dy = Math.sin(angle) * dist;
       el.style.transition = 'all ' + (0.6 + Math.random() * 0.4) + 's cubic-bezier(0,.8,.5,1)';
-      el.style.opacity = '1';
       document.body.appendChild(el);
       (function(el, dx, dy, delay) {
         setTimeout(function() {
