@@ -150,6 +150,22 @@ td { font-size: 13px; padding: 10px 0; border-bottom: 1px solid #151515; }
     </div>
   </div>
 
+  <div class="section" id="goalSection">
+    <div class="section-title">
+      <span id="goalMonth">Monthly Goal</span>
+      <button class="btn-sm" onclick="editGoal()" id="goalEditBtn" style="font-size:10px;padding:4px 10px;">Edit</button>
+    </div>
+    <div id="goalContent"></div>
+    <div id="goalEditor" style="display:none;">
+      <div style="display:flex;gap:8px;align-items:center;">
+        <span style="font-size:14px;color:#888;">$</span>
+        <input type="number" id="goalInput" style="background:#111;border:1px solid #333;border-radius:8px;padding:8px 12px;color:#e5e5e5;font-size:16px;width:100px;text-align:center;" />
+        <button class="btn-sm" onclick="saveGoal()" style="background:#C8A45C;color:#0a0a0a;border:none;font-weight:600;">Save</button>
+        <button class="btn-sm" onclick="cancelGoalEdit()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
   <div class="section chart-section">
     <div class="section-title"><span id="chartTitle">Activity</span></div>
     <div class="chart-bars" id="dynamicChart"></div>
@@ -575,6 +591,8 @@ function render() {
   document.getElementById('conversionRate').textContent = convRate + '%';
   document.getElementById('arpu').textContent = '$' + arpuVal.toFixed(2);
 
+  renderGoal();
+
   var chart = buildChart(events);
   document.getElementById('chartTitle').textContent = chart.title;
   document.getElementById('dynamicChart').innerHTML = chart.html;
@@ -641,6 +659,98 @@ function render() {
   }).join('');
 }
 
+function getMonthlyRevenue() {
+  var now = new Date();
+  var monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().slice(0, 7);
+  var monthEvents = allEvents.filter(function(e) {
+    return e.event === 'purchase' && e.source !== 'offerCode' && e.created_at && e.created_at.startsWith(monthStart);
+  });
+  var total = 0;
+  monthEvents.forEach(function(e) { total += toUSD(e.price, e.currency); });
+  return Math.round(total * 100) / 100;
+}
+
+function getGoal() {
+  return parseFloat(localStorage.getItem('revenueGoal') || '50');
+}
+
+function renderGoal() {
+  var goal = getGoal();
+  var current = getMonthlyRevenue();
+  var pct = goal > 0 ? Math.min(Math.round((current / goal) * 100), 100) : 0;
+  var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var monthName = months[new Date().getMonth()] + ' ' + new Date().getFullYear();
+  document.getElementById('goalMonth').textContent = monthName + ' Goal';
+
+  var barColor = pct >= 100 ? '#4ade80' : pct >= 50 ? '#C8A45C' : '#60a5fa';
+  var statusText = '';
+  var statusColor = '#888';
+
+  if (pct >= 100) {
+    statusText = 'Goal reached!';
+    statusColor = '#4ade80';
+  } else if (pct >= 75) {
+    statusText = 'Almost there!';
+    statusColor = '#C8A45C';
+  } else if (pct >= 50) {
+    statusText = 'Halfway!';
+    statusColor = '#C8A45C';
+  } else if (current > 0) {
+    var remaining = goal - current;
+    statusText = '$' + remaining.toFixed(2) + ' to go';
+  } else {
+    statusText = 'Waiting for first sale';
+  }
+
+  document.getElementById('goalContent').innerHTML =
+    '<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">'
+    + '<span style="font-size:24px;font-weight:600;color:' + barColor + ';">$' + current.toFixed(2) + '</span>'
+    + '<span style="font-size:14px;color:#555;">/ $' + goal.toFixed(0) + '</span>'
+    + '</div>'
+    + '<div style="height:8px;background:#111;border-radius:4px;overflow:hidden;margin-bottom:6px;">'
+    + '<div style="height:100%;width:' + pct + '%;background:' + barColor + ';border-radius:4px;transition:width 0.5s;"></div>'
+    + '</div>'
+    + '<div style="display:flex;justify-content:space-between;">'
+    + '<span style="font-size:11px;color:' + statusColor + ';">' + statusText + '</span>'
+    + '<span style="font-size:11px;color:#555;">' + pct + '%</span>'
+    + '</div>';
+
+  // Celebrate when goal first reached
+  var goalKey = 'goalCelebrated_' + new Date().toISOString().slice(0, 7);
+  if (pct >= 100 && !localStorage.getItem(goalKey)) {
+    localStorage.setItem(goalKey, 'true');
+    fireworks();
+    fireworks();
+    confetti();
+    showToast('Monthly goal reached!', 'iap');
+  }
+}
+
+function editGoal() {
+  document.getElementById('goalInput').value = getGoal();
+  document.getElementById('goalContent').style.display = 'none';
+  document.getElementById('goalEditBtn').style.display = 'none';
+  document.getElementById('goalEditor').style.display = 'block';
+}
+
+function saveGoal() {
+  var val = parseFloat(document.getElementById('goalInput').value);
+  if (val > 0) {
+    localStorage.setItem('revenueGoal', val.toString());
+    // Reset celebration if goal changed
+    var goalKey = 'goalCelebrated_' + new Date().toISOString().slice(0, 7);
+    localStorage.removeItem(goalKey);
+  }
+  cancelGoalEdit();
+  renderGoal();
+}
+
+function cancelGoalEdit() {
+  document.getElementById('goalContent').style.display = 'block';
+  document.getElementById('goalEditBtn').style.display = 'inline-block';
+  document.getElementById('goalEditor').style.display = 'none';
+}
+
 function exportData() {
   var events = getFiltered();
   var downloads = events.filter(function(e) { return e.event === 'download'; });
@@ -668,6 +778,7 @@ function exportData() {
   var report = {
     exported: new Date().toISOString(),
     filter: { app: currentApp, time: currentTime },
+    monthlyGoal: { target: getGoal(), current: getMonthlyRevenue(), month: new Date().toISOString().slice(0, 7) },
     summary: {
       downloads: downloads.length,
       purchases: purchases.length,
