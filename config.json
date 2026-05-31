@@ -78,6 +78,18 @@ td { font-size: 13px; padding: 10px 0; border-bottom: 1px solid #151515; }
 @keyframes fadeOut { to { opacity: 0; } }
 .confetti { position: fixed; top: -10px; width: 8px; height: 8px; z-index: 9998; pointer-events: none; border-radius: 2px; }
 @keyframes confettiFall { 0% { transform: translateY(0) rotate(0deg); opacity: 1; } 100% { transform: translateY(100vh) rotate(720deg); opacity: 0; } }
+.note-tag { padding: 5px 12px; border-radius: 8px; font-size: 11px; font-weight: 600; cursor: pointer; background: #111; color: #666; border: none; }
+.note-tag.active { background: #C8A45C; color: #0a0a0a; }
+.note-filter { padding: 4px 10px; border-radius: 6px; font-size: 10px; font-weight: 500; cursor: pointer; background: #0a0a0a; color: #555; border: 1px solid #222; }
+.note-filter.active { border-color: #C8A45C; color: #C8A45C; }
+.note-item { padding: 12px 0; border-bottom: 1px solid #151515; }
+.note-item:last-child { border-bottom: none; }
+.note-text { font-size: 14px; color: #e5e5e5; margin-bottom: 6px; line-height: 1.4; }
+.note-meta { display: flex; justify-content: space-between; align-items: center; }
+.note-badge { font-size: 9px; padding: 2px 8px; border-radius: 6px; font-weight: 600; }
+.note-badge-general { background: #2a2a1a; color: #C8A45C; }
+.note-badge-pc { background: #1a2a1a; color: #4ade80; }
+.note-badge-yula { background: #1a1a2a; color: #60a5fa; }
 </style>
 </head>
 <body>
@@ -99,8 +111,10 @@ td { font-size: 13px; padding: 10px 0; border-bottom: 1px solid #151515; }
     <button class="app-tab active" onclick="filterApp('all', this)">All</button>
     <button class="app-tab" onclick="filterApp('personalcapsule', this)">PC</button>
     <button class="app-tab" onclick="filterApp('yula', this)">Yula</button>
+    <button class="app-tab" onclick="showNotes(this)">Notes</button>
   </div>
 
+  <div id="analyticsView">
   <div class="time-tabs">
     <button class="time-tab" onclick="filterTime('today', this)">Today</button>
     <button class="time-tab" onclick="filterTime('7d', this)">7d</button>
@@ -201,6 +215,29 @@ td { font-size: 13px; padding: 10px 0; border-bottom: 1px solid #151515; }
       <tbody id="eventsTable"></tbody>
     </table>
     <div id="emptyState" class="empty" style="display:none;">No events yet</div>
+  </div>
+  </div>
+
+  <div id="notesView" style="display:none;">
+    <div class="section">
+      <div style="display:flex;gap:8px;margin-bottom:12px;">
+        <input type="text" id="noteInput" placeholder="Write a note..." onkeydown="if(event.key==='Enter')addNote()" style="flex:1;background:#111;border:1px solid #222;border-radius:10px;padding:10px 14px;color:#e5e5e5;font-size:14px;" />
+        <button onclick="addNote()" style="background:#C8A45C;color:#0a0a0a;border:none;border-radius:10px;padding:10px 16px;font-size:14px;font-weight:600;cursor:pointer;">+</button>
+      </div>
+      <div style="display:flex;gap:6px;margin-bottom:16px;">
+        <button class="note-tag active" onclick="setNoteTag('general', this)">General</button>
+        <button class="note-tag" onclick="setNoteTag('pc', this)">PC</button>
+        <button class="note-tag" onclick="setNoteTag('yula', this)">Yula</button>
+      </div>
+      <div class="note-filters" style="display:flex;gap:6px;margin-bottom:12px;">
+        <button class="note-filter active" onclick="filterNotes('all', this)">All</button>
+        <button class="note-filter" onclick="filterNotes('general', this)">General</button>
+        <button class="note-filter" onclick="filterNotes('pc', this)">PC</button>
+        <button class="note-filter" onclick="filterNotes('yula', this)">Yula</button>
+      </div>
+      <div id="notesList"></div>
+      <div id="notesEmpty" class="empty">No notes yet</div>
+    </div>
   </div>
 
   <div class="footer">
@@ -387,11 +424,96 @@ function checkForNew() {
   prevRevenue = revenue;
 }
 
+var currentNoteTag = 'general';
+var currentNoteFilter = 'all';
+
+function getNotes() {
+  try { return JSON.parse(localStorage.getItem('dashNotes') || '[]'); }
+  catch(e) { return []; }
+}
+
+function saveNotes(notes) {
+  localStorage.setItem('dashNotes', JSON.stringify(notes));
+}
+
+function addNote() {
+  var input = document.getElementById('noteInput');
+  var text = input.value.trim();
+  if (!text) return;
+  var notes = getNotes();
+  notes.unshift({ id: Date.now(), text: text, tag: currentNoteTag, created: new Date().toISOString() });
+  saveNotes(notes);
+  input.value = '';
+  renderNotes();
+}
+
+function deleteNote(id) {
+  var notes = getNotes().filter(function(n) { return n.id !== id; });
+  saveNotes(notes);
+  renderNotes();
+}
+
+function setNoteTag(tag, btn) {
+  currentNoteTag = tag;
+  var tags = document.querySelectorAll('.note-tag');
+  for (var i = 0; i < tags.length; i++) tags[i].classList.remove('active');
+  btn.classList.add('active');
+}
+
+function filterNotes(f, btn) {
+  currentNoteFilter = f;
+  var filters = document.querySelectorAll('.note-filter');
+  for (var i = 0; i < filters.length; i++) filters[i].classList.remove('active');
+  btn.classList.add('active');
+  renderNotes();
+}
+
+function renderNotes() {
+  var notes = getNotes();
+  if (currentNoteFilter !== 'all') {
+    notes = notes.filter(function(n) { return n.tag === currentNoteFilter; });
+  }
+  var el = document.getElementById('notesList');
+  var empty = document.getElementById('notesEmpty');
+  if (notes.length === 0) {
+    el.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+  el.innerHTML = notes.map(function(n) {
+    var dt = new Date(n.created);
+    var time = dt.toLocaleDateString('tr-TR', { month: 'short', day: 'numeric' }) + ' ' + dt.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+    var badgeClass = 'note-badge note-badge-' + n.tag;
+    var tagLabel = n.tag === 'pc' ? 'PC' : n.tag === 'yula' ? 'Yula' : 'General';
+    return '<div class="note-item">'
+      + '<div class="note-text">' + n.text.replace(/</g, '&lt;') + '</div>'
+      + '<div class="note-meta">'
+      + '<div style="display:flex;gap:6px;align-items:center;">'
+      + '<span class="' + badgeClass + '">' + tagLabel + '</span>'
+      + '<span style="font-size:10px;color:#444;">' + time + '</span>'
+      + '</div>'
+      + '<button class="btn-del" onclick="deleteNote(' + n.id + ')">✕</button>'
+      + '</div></div>';
+  }).join('');
+}
+
+function showNotes(btn) {
+  var tabs = document.querySelectorAll('.app-tab');
+  for (var i = 0; i < tabs.length; i++) tabs[i].classList.remove('active');
+  btn.classList.add('active');
+  document.getElementById('analyticsView').style.display = 'none';
+  document.getElementById('notesView').style.display = 'block';
+  renderNotes();
+}
+
 function filterApp(app, btn) {
   currentApp = app;
   var tabs = document.querySelectorAll('.app-tab');
   for (var i = 0; i < tabs.length; i++) tabs[i].classList.remove('active');
   btn.classList.add('active');
+  document.getElementById('analyticsView').style.display = 'block';
+  document.getElementById('notesView').style.display = 'none';
   render();
 }
 
@@ -779,6 +901,7 @@ function exportData() {
     exported: new Date().toISOString(),
     filter: { app: currentApp, time: currentTime },
     monthlyGoal: { target: getGoal(), current: getMonthlyRevenue(), month: new Date().toISOString().slice(0, 7) },
+    notes: getNotes(),
     summary: {
       downloads: downloads.length,
       purchases: purchases.length,
