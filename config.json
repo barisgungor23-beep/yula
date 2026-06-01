@@ -1,435 +1,80 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Analytics">
-<title>Indie Analytics</title>
-<style>
-*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display',system-ui,sans-serif;background:#0a0a0a;color:#e5e5e5;padding:16px;padding-top:env(safe-area-inset-top,16px);padding-bottom:calc(env(safe-area-inset-bottom,0px)+16px);min-height:100vh;overflow-x:hidden}
-h1{font-size:22px;font-weight:600;margin-bottom:0;color:#C8A45C}
-.header-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
-.last-updated{font-size:10px;color:#444}
-.rt-dot{display:inline-block;width:5px;height:5px;border-radius:50%;margin-left:6px}
-.rt-on{background:#4ade80;animation:pulse 2s infinite}
-.rt-off{background:#f87171}
-.main-tabs{display:flex;gap:4px;margin-bottom:14px;border-bottom:1px solid #1a1a1a;padding-bottom:10px;overflow-x:auto;-webkit-overflow-scrolling:touch}
-.main-tab{padding:8px 12px;border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;background:transparent;color:#555;border:none;white-space:nowrap;flex-shrink:0}
-.main-tab.active{background:#C8A45C;color:#0a0a0a}
-.sub-tabs{display:flex;gap:6px;margin-bottom:10px}
-.sub-tab{padding:6px 14px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;background:#1a1a1a;color:#666;border:none}
-.sub-tab.active{background:#222;color:#e5e5e5}
-.time-tabs{display:flex;gap:4px;margin-bottom:16px}
-.time-tab{padding:5px 10px;border-radius:7px;font-size:11px;font-weight:500;cursor:pointer;background:#111;color:#666;border:none}
-.time-tab.active{background:#222;color:#e5e5e5}
-.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:10px}
-.card{background:#1a1a1a;border-radius:14px;padding:14px}
-.card-label{font-size:11px;color:#888;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px}
-.card-value{font-size:26px;font-weight:600}
-.card-sub{font-size:11px;color:#555;margin-top:3px}
-.gold{color:#C8A45C}.green{color:#4ade80}.blue{color:#60a5fa}.purple{color:#a78bfa}.teal{color:#2dd4bf}
-.growth-up{color:#4ade80;font-size:11px;font-weight:600}
-.growth-down{color:#f87171;font-size:11px;font-weight:600}
-.growth-flat{color:#888;font-size:11px}
-.section{background:#1a1a1a;border-radius:14px;padding:14px;margin-bottom:12px}
-.section-title{font-size:13px;font-weight:600;color:#888;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;text-transform:uppercase;letter-spacing:.5px}
-table{width:100%;border-collapse:collapse}
-th{text-align:left;font-size:10px;color:#555;padding:6px 0;border-bottom:1px solid #222;font-weight:600;text-transform:uppercase;letter-spacing:.5px}
-td{font-size:13px;padding:10px 0;border-bottom:1px solid #151515}
-.badge{display:inline-block;font-size:9px;padding:3px 8px;border-radius:6px;font-weight:600;text-transform:uppercase;letter-spacing:.3px}
-.badge-iap{background:#0a2a0a;color:#4ade80}.badge-offer{background:#2a1a0a;color:#C8A45C}.badge-dl{background:#0a1a2a;color:#60a5fa}.badge-update{background:#1a1a2a;color:#a78bfa}
-.login-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;height:80vh;gap:16px}
-.login-wrap input{background:#1a1a1a;border:1px solid #333;border-radius:12px;padding:14px 16px;color:#e5e5e5;font-size:14px;width:100%;max-width:300px;text-align:center}
-.login-wrap button{background:#C8A45C;color:#0a0a0a;border:none;border-radius:12px;padding:14px 32px;font-size:15px;font-weight:600;cursor:pointer;width:100%;max-width:300px}
-.error{color:#f87171;font-size:13px;margin-top:8px}
-.btn-sm{background:none;border:1px solid #222;color:#666;padding:8px 16px;border-radius:10px;cursor:pointer;font-size:12px;font-weight:500}
-.btn-sm.loading{opacity:.4;pointer-events:none}
-.btn-del{background:none;border:none;color:#333;cursor:pointer;font-size:16px;padding:4px 8px}
-.btn-del:hover{color:#f87171}
-.btn-danger{background:none;border:1px solid #7f1d1d;color:#f87171;padding:6px 12px;border-radius:8px;cursor:pointer;font-size:11px;font-weight:500}
-.btn-cancel{background:none;border:1px solid #333;color:#888;padding:4px 8px;border-radius:6px;cursor:pointer;font-size:10px}
-.btn-confirm-del{background:#7f1d1d;border:none;color:#fecaca;padding:4px 8px;border-radius:6px;cursor:pointer;font-size:10px;font-weight:600}
-.inline-confirm{display:flex;gap:4px;align-items:center}
-.clear-confirm{display:inline-flex;gap:6px;align-items:center}
-.bar-row{display:flex;align-items:center;gap:8px;margin-bottom:6px}
-.bar-label{font-size:11px;color:#666;width:32px;text-align:right}
-.bar-track{flex:1;height:6px;background:#111;border-radius:3px;overflow:hidden}
-.bar-fill{height:100%;border-radius:3px;transition:width .3s}
-.bar-value{font-size:11px;color:#888;width:28px}
-.chart-bars{display:flex;align-items:flex-end;gap:2px;height:80px;padding-top:4px}
-.chart-bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;height:100%;justify-content:flex-end;min-width:0}
-.chart-bar{width:100%;min-height:2px;border-radius:3px 3px 0 0;transition:height .3s}
-.chart-label{font-size:7px;color:#444;white-space:nowrap;overflow:hidden}
-.empty{text-align:center;padding:24px;color:#333;font-size:13px}
-.live-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:#4ade80;margin-right:6px;animation:pulse 2s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-.footer{text-align:center;padding:20px 0;display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
-.footer-info{width:100%;font-size:10px;color:#333;margin-top:4px}
-.stat-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #151515}
-.stat-row:last-child{border-bottom:none}
-.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);padding:12px 20px;border-radius:12px;font-size:14px;font-weight:600;z-index:9999;animation:slideDown .3s ease,fadeOut .5s ease 2.5s;pointer-events:none;white-space:nowrap}
-.toast-dl{background:#0a1a2a;color:#60a5fa;border:1px solid #1a3a5a}
-.toast-iap{background:#0a2a0a;color:#4ade80;border:1px solid #1a4a1a}
-@keyframes slideDown{from{top:-50px;opacity:0}to{top:20px;opacity:1}}
-@keyframes fadeOut{to{opacity:0}}
-.confetti{position:fixed;top:-10px;width:8px;height:8px;z-index:9998;pointer-events:none;border-radius:2px}
-@keyframes confettiFall{0%{transform:translateY(0) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
-.note-group{margin-bottom:16px}
-.note-group-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid #1a1a1a}
-.note-group-general .note-group-title{color:#C8A45C}
-.note-group-pc .note-group-title{color:#4ade80}
-.note-group-yula .note-group-title{color:#60a5fa}
-.note-row{background:#1a1a1a;border-radius:10px;padding:10px 14px;margin-bottom:4px;display:flex;align-items:center;gap:8px}
-.note-row-text{font-size:13px;color:#e5e5e5;flex:1;line-height:1.4}
-.note-row-time{font-size:10px;color:#444;white-space:nowrap}
-.note-tag{padding:5px 12px;border-radius:8px;font-size:11px;font-weight:600;cursor:pointer;background:#111;color:#666;border:none}
-.note-tag.active{background:#C8A45C;color:#0a0a0a}
-.mkt-form select,.mkt-form input{background:#111;border:1px solid #222;border-radius:8px;padding:8px 12px;color:#e5e5e5;font-size:13px;width:100%;appearance:none;-webkit-appearance:none}
-.mkt-item{padding:14px 0;border-bottom:1px solid #151515}
-.mkt-item:last-child{border-bottom:none}
-.mkt-platform{font-size:9px;padding:3px 8px;border-radius:6px;font-weight:600}
-.mkt-reddit{background:#1a1210;color:#ff6b35}.mkt-tiktok{background:#1a1a1a;color:#e5e5e5}.mkt-apple_ads{background:#0a1a2a;color:#60a5fa}.mkt-twitter{background:#0a1a2a;color:#60a5fa}.mkt-other{background:#1a1a1a;color:#888}
-.mkt-app{font-size:9px;padding:2px 6px;border-radius:4px;font-weight:600;margin-left:4px}
-.mkt-app-pc{background:#1a2a1a;color:#4ade80}.mkt-app-yula{background:#1a1a2a;color:#60a5fa}.mkt-app-all{background:#1a1a1a;color:#888}
-.insight-card{background:#111;border-radius:12px;padding:14px;margin-bottom:10px}
-.insight-label{font-size:11px;color:#666;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
-.insight-value{font-size:20px;font-weight:600}
-.insight-sub{font-size:11px;color:#555;margin-top:2px}
-.cohort-row{display:flex;gap:4px;margin-bottom:4px;align-items:center}
-.cohort-label{font-size:10px;color:#666;width:50px;text-align:right;flex-shrink:0}
-.cohort-cell{height:24px;border-radius:4px;flex:1;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600}
-.file-item{display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid #151515}
-.file-item:last-child{border-bottom:none}
-.file-icon{font-size:20px;width:36px;height:36px;background:#111;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.file-info{flex:1;min-width:0}
-.file-name{font-size:13px;color:#e5e5e5;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.file-meta{font-size:10px;color:#555;margin-top:2px}
-.file-actions{display:flex;gap:2px}
-.upload-area{border:2px dashed #222;border-radius:12px;padding:24px;text-align:center;cursor:pointer;transition:border-color .2s}
-.upload-area:hover{border-color:#C8A45C}
-.upload-area.dragging{border-color:#C8A45C;background:#1a1a0a}
-.folder-tabs{display:flex;gap:4px;margin-bottom:12px;flex-wrap:wrap}
-.folder-tab{padding:5px 10px;border-radius:6px;font-size:11px;font-weight:500;cursor:pointer;background:#111;color:#666;border:none}
-.folder-tab.active{background:#C8A45C;color:#0a0a0a}
-</style>
-</head>
-<body>
-<div id="loginView" class="login-wrap">
-  <h1 style="margin-bottom:16px">Indie Analytics</h1>
-  <div id="loginSetup">
-    <input type="password" id="keyInput" placeholder="Service role key" style="margin-bottom:8px"/>
-    <input type="password" id="pinSetup" placeholder="Set a password"/>
-    <button onclick="firstLogin()">Setup & Unlock</button>
-  </div>
-  <div id="loginPin" style="display:none">
-    <input type="password" id="pinInput" placeholder="Enter password" onkeydown="if(event.key==='Enter')pinLogin()"/>
-    <button onclick="pinLogin()">Unlock</button>
-    <div style="margin-top:12px"><button class="btn-sm" onclick="resetLogin()" style="font-size:11px;color:#555">Reset (forgot password)</button></div>
-  </div>
-  <div id="loginError" class="error"></div>
-</div>
-<div id="dashboard" style="display:none">
-  <div class="header-row"><h1><span class="live-dot"></span>Indie Analytics<span class="rt-dot rt-off" id="rtDot" title="Realtime"></span></h1><span class="last-updated" id="lastUpdated"></span></div>
-  <div class="main-tabs">
-    <button class="main-tab active" onclick="switchTab('dashboard',this)">📊 Dashboard</button>
-    <button class="main-tab" onclick="switchTab('notes',this)">📝 Notes</button>
-    <button class="main-tab" onclick="switchTab('marketing',this)">📣 Marketing</button>
-    <button class="main-tab" onclick="switchTab('insights',this)">📈 Insights</button>
-    <button class="main-tab" onclick="switchTab('storage',this)">📁 Storage</button>
-    <button class="main-tab" onclick="switchTab('metadata',this)">🏷 Metadata</button>
-  </div>
-
-  <!-- DASHBOARD -->
-  <div id="tab-dashboard">
-    <div class="sub-tabs"><button class="sub-tab active" onclick="filterApp('all',this)">All</button><button class="sub-tab" onclick="filterApp('personalcapsule',this)">PC</button><button class="sub-tab" onclick="filterApp('yula',this)">Yula</button></div>
-    <div class="time-tabs"><button class="time-tab" onclick="filterTime('today',this)">Today</button><button class="time-tab" onclick="filterTime('7d',this)">7d</button><button class="time-tab" onclick="filterTime('30d',this)">30d</button><button class="time-tab active" onclick="filterTime('lifetime',this)">Lifetime</button></div>
-    <div class="grid"><div class="card"><div class="card-label">Downloads</div><div class="card-value blue" id="totalDownloads">-</div><div class="card-sub" id="dlSub"></div></div><div class="card"><div class="card-label">Purchases</div><div class="card-value green" id="totalPurchases">-</div><div class="card-sub" id="prSub"></div></div></div>
-    <div class="grid"><div class="card"><div class="card-label">Revenue</div><div class="card-value gold" id="totalRevenue">-</div><div class="card-sub" id="revSub"></div></div><div class="card"><div class="card-label">Proceeds</div><div class="card-value teal" id="totalProceeds">-</div><div class="card-sub">after Apple 15%</div></div></div>
-    <div class="grid" style="margin-bottom:20px"><div class="card"><div class="card-label">Conversion</div><div class="card-value purple" id="conversionRate">-</div><div class="card-sub">purchase / download</div></div><div class="card"><div class="card-label">ARPU</div><div class="card-value gold" id="arpu">-</div><div class="card-sub">revenue / download</div></div></div>
-    <div class="section"><div class="section-title"><span id="goalMonth">Monthly Goal</span><button class="btn-sm" onclick="editGoal()" id="goalEditBtn" style="font-size:10px;padding:4px 10px">Edit</button></div><div id="goalContent"></div><div id="goalEditor" style="display:none"><div style="display:flex;gap:8px;align-items:center"><span style="font-size:14px;color:#888">$</span><input type="number" id="goalInput" style="background:#111;border:1px solid #333;border-radius:8px;padding:8px 12px;color:#e5e5e5;font-size:16px;width:100px;text-align:center"/><button class="btn-sm" onclick="saveGoal()" style="background:#C8A45C;color:#0a0a0a;border:none;font-weight:600">Save</button><button class="btn-sm" onclick="cancelGoalEdit()">Cancel</button></div></div></div>
-    <div class="section"><div class="section-title"><span id="chartTitle">Activity</span></div><div class="chart-bars" id="dynamicChart"></div></div>
-    <div class="section"><div class="section-title"><span>Revenue by currency</span></div><div id="revenueByCurrency"></div></div>
-    <div class="section"><div class="section-title"><span>Source breakdown</span></div><div id="sourceBreakdown"></div></div>
-    <div class="section"><div class="section-title"><span>Top countries</span></div><div id="countryBars"></div></div>
-    <div class="section"><div class="section-title"><span>Devices</span></div><div id="deviceBars"></div></div>
-    <div class="section"><div class="section-title"><span>Recent events</span><span id="clearAllBtn"><button class="btn-danger" onclick="askClearAll()">Clear all</button></span></div><table><thead><tr><th>Time</th><th>Event</th><th>Detail</th><th></th></tr></thead><tbody id="eventsTable"></tbody></table><div id="emptyState" class="empty" style="display:none">No events yet</div></div>
-  </div>
-
-  <!-- NOTES -->
-  <div id="tab-notes" style="display:none">
-    <div class="section">
-      <div style="display:flex;gap:8px;margin-bottom:12px;align-items:flex-end"><textarea id="noteInput" placeholder="Write a note..." rows="2" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();addNote()}" style="flex:1;background:#111;border:1px solid #222;border-radius:10px;padding:10px 14px;color:#e5e5e5;font-size:14px;resize:vertical;font-family:inherit;line-height:1.4"></textarea><button onclick="addNote()" style="background:#C8A45C;color:#0a0a0a;border:none;border-radius:10px;padding:10px 16px;font-size:14px;font-weight:600;cursor:pointer;height:44px">+</button></div>
-      <div style="display:flex;gap:6px;margin-bottom:16px"><button class="note-tag active" onclick="setNoteTag('general',this)">General</button><button class="note-tag" onclick="setNoteTag('pc',this)">PC</button><button class="note-tag" onclick="setNoteTag('yula',this)">Yula</button></div>
-    </div>
-    <div id="notesGrouped"></div>
-    <div id="notesEmpty" class="empty" style="display:none">No notes yet</div>
-  </div>
-
-  <!-- MARKETING -->
-  <div id="tab-marketing" style="display:none">
-    <div class="section">
-      <div class="section-title"><span>New Campaign</span></div>
-      <div class="mkt-form" style="display:flex;flex-direction:column;gap:8px">
-        <select id="mktApp"><option value="all">All Apps</option><option value="personalcapsule">PersonalCapsule</option><option value="yula">Yula</option></select>
-        <select id="mktPlatform"><option value="reddit">Reddit</option><option value="tiktok">TikTok</option><option value="apple_ads">Apple Ads</option><option value="twitter">Twitter/X</option><option value="other">Other</option></select>
-        <input type="text" id="mktName" placeholder="Campaign name"/>
-        <input type="text" id="mktCode" placeholder="Offer code (optional)"/>
-        <input type="text" id="mktNotes" placeholder="Notes"/>
-        <button onclick="addCampaign()" style="background:#C8A45C;color:#0a0a0a;border:none;border-radius:8px;padding:10px;font-size:14px;font-weight:600;cursor:pointer">Add Campaign</button>
-      </div>
-    </div>
-    <div class="section">
-      <div class="section-title"><span>Campaign Log</span><span id="mktCount" style="font-size:11px;color:#555"></span></div>
-      <div id="mktList"></div>
-      <div id="mktEmpty" class="empty" style="display:none">No campaigns yet</div>
-    </div>
-  </div>
-
-  <!-- INSIGHTS -->
-  <div id="tab-insights" style="display:none">
-    <div class="section"><div class="section-title"><span>Weekly Report</span></div><div id="weeklyReport"></div></div>
-    <div class="section"><div class="section-title"><span>Best Performers</span></div><div id="bestPerformers"></div></div>
-    <div class="section"><div class="section-title"><span>Cohort Analysis</span><span style="font-size:10px;color:#555">download → purchase</span></div><div id="cohortAnalysis"></div></div>
-  </div>
-
-  <!-- STORAGE -->
-  <div id="tab-storage" style="display:none">
-    <div class="folder-tabs">
-      <button class="folder-tab active" onclick="filterFolder('',this)">All</button>
-      <button class="folder-tab" onclick="filterFolder('pc',this)">PC</button>
-      <button class="folder-tab" onclick="filterFolder('yula',this)">Yula</button>
-      <button class="folder-tab" onclick="filterFolder('screenshots',this)">Screenshots</button>
-      <button class="folder-tab" onclick="filterFolder('general',this)">General</button>
-    </div>
-    <div class="section">
-      <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()">
-        <div style="font-size:24px;margin-bottom:8px;color:#555">↑</div>
-        <div style="font-size:13px;color:#666">Tap to upload or drag & drop</div>
-        <div style="font-size:11px;color:#444;margin-top:4px" id="uploadFolder">Folder: All</div>
-        <input type="file" id="fileInput" multiple style="display:none" onchange="handleUpload(this.files)"/>
-      </div>
-      <div style="display:flex;gap:6px;margin-top:8px">
-        <select id="uploadFolderSelect" onchange="updateUploadLabel()" style="background:#111;border:1px solid #222;border-radius:8px;padding:6px 10px;color:#e5e5e5;font-size:12px;flex:1;appearance:none;-webkit-appearance:none">
-          <option value="">Root</option>
-          <option value="pc">PC</option>
-          <option value="yula">Yula</option>
-          <option value="screenshots">Screenshots</option>
-          <option value="general">General</option>
-        </select>
-      </div>
-    </div>
-    <div class="section">
-      <div class="section-title"><span>Files</span><span id="fileCount" style="font-size:11px;color:#555"></span></div>
-      <div id="fileList"></div>
-      <div id="filesEmpty" class="empty" style="display:none">No files yet</div>
-    </div>
-    <div class="section">
-      <div class="section-title"><span>Storage usage</span></div>
-      <div id="storageUsage"></div>
-    </div>
-  </div>
-
-  <!-- METADATA -->
-  <div id="tab-metadata" style="display:none">
-    <div class="section" id="metaImportSection">
-      <div class="section-title" onclick="toggleMetaImport()" style="cursor:pointer"><span>▸ Import / Add Metadata</span></div>
-      <div id="metaImportBody" style="display:none">
-        <div style="margin-bottom:12px">
-          <textarea id="metaJsonInput" rows="4" placeholder='Paste JSON from Claude here...' style="width:100%;background:#111;border:1px solid #222;border-radius:10px;padding:10px 14px;color:#e5e5e5;font-size:12px;font-family:monospace;resize:vertical;line-height:1.4;margin-bottom:8px"></textarea>
-          <div style="display:flex;gap:8px">
-            <button onclick="importMetadata()" style="flex:1;background:#C8A45C;color:#0a0a0a;border:none;border-radius:8px;padding:10px;font-size:14px;font-weight:600;cursor:pointer">Import</button>
-            <button onclick="document.getElementById('metaJsonInput').value=''" class="btn-sm" style="padding:10px 16px">Clear</button>
-          </div>
-          <div id="metaImportStatus" style="margin-top:8px;font-size:12px"></div>
-        </div>
-        <div style="border-top:1px solid #222;padding-top:12px;margin-top:4px">
-          <div style="font-size:12px;color:#888;margin-bottom:8px;font-weight:600">MANUAL ENTRY</div>
-          <div class="mkt-form" style="display:flex;flex-direction:column;gap:8px">
-            <select id="metaApp"><option value="personalcapsule">PersonalCapsule</option><option value="yula">Yula</option></select>
-            <input type="text" id="metaLocale" placeholder="Locale (e.g. en-US, tr, de-DE)"/>
-            <input type="text" id="metaTitle" placeholder="App title"/>
-            <input type="text" id="metaSubtitle" placeholder="Subtitle"/>
-            <textarea id="metaKeywords" rows="2" placeholder="Keywords (comma-separated)" style="width:100%;background:#111;border:1px solid #222;border-radius:8px;padding:8px 12px;color:#e5e5e5;font-size:13px;font-family:inherit;resize:vertical"></textarea>
-            <input type="text" id="metaNotes" placeholder="Notes (optional)"/>
-            <button onclick="addMetadataManual()" style="background:#C8A45C;color:#0a0a0a;border:none;border-radius:8px;padding:10px;font-size:14px;font-weight:600;cursor:pointer">Add Entry</button>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div id="metaKeyInsights"></div>
-    <div id="metaChart"></div>
-    <div id="metaVersionSummary"></div>
-    <div id="metaHeatmap"></div>
-    <div id="metaTimeline"></div>
-    <div id="metaEmpty" class="empty" style="display:none">No metadata history yet — Import or add your first metadata above</div>
-  </div>
-
-  <div class="footer">
-    <button class="btn-sm" id="refreshBtn" onclick="manualRefresh()">Refresh</button>
-    <button class="btn-sm" onclick="exportData()">Export</button>
-    <button class="btn-sm" onclick="logout()">Logout</button>
-    <div class="footer-info" id="rateInfo"></div>
-  </div>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script>
-var SB='https://vpsmaqsessodayyjamnd.supabase.co',SK='',allEvents=[],currentApp='all',currentTime='lifetime',prevDownloads=-1,prevRevenue=-1,fxRates={},currentNoteTag='general',currentTab='dashboard',allNotes=[],allCampaigns=[],allFiles=[],currentFolder='',sbClient=null,rtChannel=null;
-function sbHeaders(){return{'apikey':SK,'Authorization':'Bearer '+SK,'Content-Type':'application/json'}}
-
-// ANIMATIONS
-function confetti(){var c=['#C8A45C','#4ade80','#60a5fa','#a78bfa','#f87171','#fbbf24','#e879f9'];for(var i=0;i<40;i++){var el=document.createElement('div');el.className='confetti';el.style.left=Math.random()*100+'vw';el.style.background=c[Math.floor(Math.random()*c.length)];el.style.width=(4+Math.random()*6)+'px';el.style.height=(4+Math.random()*6)+'px';el.style.animation='confettiFall '+(1.5+Math.random()*2)+'s ease forwards';el.style.animationDelay=Math.random()*0.5+'s';document.body.appendChild(el);setTimeout(function(e){e.remove()}.bind(null,el),4000)}}
-function fireworks(){var c=['#C8A45C','#4ade80','#60a5fa','#f87171','#fbbf24','#e879f9','#fff'];for(var b=0;b<3;b++){var cx=20+Math.random()*60,cy=15+Math.random()*30,dl=b*400;for(var i=0;i<20;i++){var co=c[Math.floor(Math.random()*c.length)],el=document.createElement('div');el.style.cssText='position:fixed;width:4px;height:4px;border-radius:50%;z-index:9998;pointer-events:none;opacity:1;';el.style.left=cx+'vw';el.style.top=cy+'vh';el.style.background=co;el.style.boxShadow='0 0 6px '+co;var a=(Math.PI*2/20)*i,d=80+Math.random()*120,dx=Math.cos(a)*d,dy=Math.sin(a)*d;el.style.transition='all '+(0.6+Math.random()*0.4)+'s cubic-bezier(0,.8,.5,1)';document.body.appendChild(el);(function(el,dx,dy,dl){setTimeout(function(){el.style.transform='translate('+dx+'px,'+dy+'px) scale(0)';el.style.opacity='0'},dl+50);setTimeout(function(){el.remove()},dl+1500)})(el,dx,dy,dl)}}}
-function showToast(m,t){var el=document.createElement('div');el.className='toast toast-'+t;el.textContent=m;document.body.appendChild(el);setTimeout(function(){el.remove()},3000)}
-
-// FX
-function toUSD(p,c){if(!p)return 0;var a=parseFloat(p);if(!c||c==='USD')return a;var r=fxRates[c];return r?a/r:a}
-function loadFxRates(){return fetch('https://api.frankfurter.dev/v1/latest?base=USD').then(function(r){return r.json()}).then(function(d){fxRates=d.rates||{};var el=document.getElementById('rateInfo');if(el)el.textContent='FX: '+d.date}).catch(function(){fxRates={EUR:0.92,GBP:0.79,TRY:38.5,BRL:5.6,MXN:19.5,INR:85,IDR:16200,CAD:1.37,AUD:1.55,JPY:155}})}
-
-// CRYPTO
-async function deriveKey(pw,salt){var km=await crypto.subtle.importKey('raw',new TextEncoder().encode(pw),'PBKDF2',false,['deriveKey']);return crypto.subtle.deriveKey({name:'PBKDF2',salt:salt,iterations:100000,hash:'SHA-256'},km,{name:'AES-GCM',length:256},false,['encrypt','decrypt'])}
-async function encryptStr(text,pw){var salt=crypto.getRandomValues(new Uint8Array(16)),iv=crypto.getRandomValues(new Uint8Array(12)),key=await deriveKey(pw,salt),enc=await crypto.subtle.encrypt({name:'AES-GCM',iv:iv},key,new TextEncoder().encode(text)),buf=new Uint8Array(salt.length+iv.length+new Uint8Array(enc).length);buf.set(salt);buf.set(iv,16);buf.set(new Uint8Array(enc),28);return btoa(String.fromCharCode.apply(null,buf))}
-async function decryptStr(b64,pw){try{var buf=Uint8Array.from(atob(b64),function(c){return c.charCodeAt(0)}),salt=buf.slice(0,16),iv=buf.slice(16,28),data=buf.slice(28),key=await deriveKey(pw,salt),dec=await crypto.subtle.decrypt({name:'AES-GCM',iv:iv},key,data);return new TextDecoder().decode(dec)}catch(e){return null}}
-
-// AUTH
-async function firstLogin(){var key=document.getElementById('keyInput').value.trim(),pw=document.getElementById('pinSetup').value.trim();if(!key||!pw)return;if(pw.length<4){document.getElementById('loginError').textContent='Password must be at least 4 characters';return}document.getElementById('loginError').textContent='';SK=key;var ok=await loadFxRates().then(function(){return loadData()});if(ok){var enc=await encryptStr(key,pw);localStorage.setItem('sb_enc_v1',enc);document.getElementById('loginView').style.display='none';document.getElementById('dashboard').style.display='block';initRealtime()}else{SK=''}}
-async function pinLogin(){var pw=document.getElementById('pinInput').value.trim();if(!pw)return;document.getElementById('loginError').textContent='';var enc=localStorage.getItem('sb_enc_v1');var key=await decryptStr(enc,pw);if(!key){document.getElementById('loginError').textContent='Wrong password';return}SK=key;var ok=await loadFxRates().then(function(){return loadData()});if(ok){document.getElementById('loginView').style.display='none';document.getElementById('dashboard').style.display='block';initRealtime()}else{document.getElementById('loginError').textContent='Key decrypted but connection failed';SK=''}}
-function resetLogin(){localStorage.removeItem('sb_enc_v1');document.getElementById('loginSetup').style.display='block';document.getElementById('loginPin').style.display='none';document.getElementById('loginError').textContent='';document.getElementById('keyInput').value='';document.getElementById('pinSetup').value=''}
-function logout(){if(rtChannel){rtChannel.unsubscribe();rtChannel=null}SK='';allEvents=[];prevDownloads=-1;prevRevenue=-1;document.getElementById('rtDot').className='rt-dot rt-off';document.getElementById('dashboard').style.display='none';document.getElementById('loginView').style.display='flex';if(localStorage.getItem('sb_enc_v1')){document.getElementById('loginSetup').style.display='none';document.getElementById('loginPin').style.display='block';document.getElementById('pinInput').value=''}else{document.getElementById('loginSetup').style.display='block';document.getElementById('loginPin').style.display='none'}document.getElementById('loginError').textContent=''}
-function initRealtime(){try{sbClient=window.supabase.createClient(SB,SK);rtChannel=sbClient.channel('events-live').on('postgres_changes',{event:'INSERT',schema:'public',table:'events'},function(payload){allEvents.unshift(payload.new);checkForNew();if(currentTab==='dashboard')render()}).subscribe(function(status){document.getElementById('rtDot').className='rt-dot '+(status==='SUBSCRIBED'?'rt-on':'rt-off')})}catch(e){console.log('[RT] init failed:',e)}}
-function init(){var enc=localStorage.getItem('sb_enc_v1');if(enc){document.getElementById('loginSetup').style.display='none';document.getElementById('loginPin').style.display='block'}else{document.getElementById('loginSetup').style.display='block';document.getElementById('loginPin').style.display='none'}}
-
-// TABS
-function switchTab(t,b){currentTab=t;var tabs=document.querySelectorAll('.main-tab');for(var i=0;i<tabs.length;i++)tabs[i].classList.remove('active');b.classList.add('active');['dashboard','notes','marketing','insights','storage','metadata'].forEach(function(x){document.getElementById('tab-'+x).style.display=x===t?'block':'none'});if(t==='notes')loadNotes();if(t==='marketing')loadCampaigns();if(t==='insights')renderInsights();if(t==='storage')loadFiles();if(t==='metadata')loadMetadata()}
-
-// DATA
-function manualRefresh(){var b=document.getElementById('refreshBtn');b.classList.add('loading');b.textContent='...';loadData().then(function(){b.classList.remove('loading');b.textContent='Refresh'})}
-function loadData(){return fetch(SB+'/rest/v1/events?select=*&order=created_at.desc&limit=10000',{headers:sbHeaders()}).then(function(r){if(!r.ok){document.getElementById('loginError').textContent='Invalid key (HTTP '+r.status+')';return false}return r.json().then(function(d){allEvents=d;document.getElementById('lastUpdated').textContent=new Date().toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'});checkForNew();render();loadNotesSilent();loadCampaignsSilent();loadMetadataSilent();return true})}).catch(function(){document.getElementById('loginError').textContent='Connection error';return false})}
-function loadNotesSilent(){fetch(SB+'/rest/v1/notes?select=*&order=created_at.desc&limit=500',{headers:sbHeaders()}).then(function(r){return r.json()}).then(function(d){allNotes=d}).catch(function(){})}
-function loadCampaignsSilent(){fetch(SB+'/rest/v1/campaigns?select=*&order=created_at.desc&limit=200',{headers:sbHeaders()}).then(function(r){return r.json()}).then(function(d){allCampaigns=d}).catch(function(){})}
-function loadMetadataSilent(){fetch(SB+'/rest/v1/metadata_history?select=*&order=created_at.desc&limit=500',{headers:sbHeaders()}).then(function(r){return r.json()}).then(function(d){allMetadata=d}).catch(function(){})}
-function checkForNew(){var dl=allEvents.filter(function(e){return e.event==='download'}).length;var rv=0;allEvents.filter(function(e){return e.event==='purchase'&&e.source!=='offerCode'}).forEach(function(e){rv+=toUSD(e.price,e.currency)});if(prevDownloads>=0&&dl>prevDownloads){showToast('+ '+(dl-prevDownloads)+' new download'+(dl-prevDownloads>1?'s':'')+'!','dl');confetti()}if(prevRevenue>=0&&rv>prevRevenue){showToast('+ $'+(rv-prevRevenue).toFixed(2)+' revenue!','iap');fireworks();confetti()}prevDownloads=dl;prevRevenue=rv}
-
-// FILTERS
-function filterApp(a,b){currentApp=a;var t=document.querySelectorAll('.sub-tab');for(var i=0;i<t.length;i++)t[i].classList.remove('active');b.classList.add('active');render()}
-function filterTime(t,b){currentTime=t;var tabs=document.querySelectorAll('.time-tab');for(var i=0;i<tabs.length;i++)tabs[i].classList.remove('active');b.classList.add('active');render()}
-function getFiltered(){var ev=currentApp==='all'?allEvents:allEvents.filter(function(e){return e.app===currentApp});if(currentTime==='lifetime')return ev;var now=new Date(),cut;if(currentTime==='today')cut=new Date(now.getFullYear(),now.getMonth(),now.getDate());else if(currentTime==='7d')cut=new Date(now-7*864e5);else if(currentTime==='30d')cut=new Date(now-30*864e5);return ev.filter(function(e){return new Date(e.created_at)>=cut})}
-function getYesterday(){var now=new Date(),yS=new Date(now.getFullYear(),now.getMonth(),now.getDate()-1),yE=new Date(now.getFullYear(),now.getMonth(),now.getDate());var ev=currentApp==='all'?allEvents:allEvents.filter(function(e){return e.app===currentApp});return ev.filter(function(e){var d=new Date(e.created_at);return d>=yS&&d<yE})}
-
-// DELETE EVENTS
-function showDeleteConfirm(id){var c=document.getElementById('del-'+id);if(!c)return;c.innerHTML='<div class="inline-confirm"><button class="btn-cancel" onclick="render()">No</button><button class="btn-confirm-del" onclick="doDelete('+id+')">Yes</button></div>'}
-function doDelete(id){fetch(SB+'/rest/v1/events?id=eq.'+id,{method:'DELETE',headers:sbHeaders()}).then(function(r){if(r.ok)loadData()})}
-function askClearAll(){var ev=getFiltered();if(!ev.length)return;document.getElementById('clearAllBtn').innerHTML='<span class="clear-confirm"><span style="font-size:11px;color:#f87171">'+ev.length+'?</span><button class="btn-cancel" onclick="cancelClearAll()">No</button><button class="btn-confirm-del" onclick="doClearAll()">Yes</button></span>'}
-function cancelClearAll(){document.getElementById('clearAllBtn').innerHTML='<button class="btn-danger" onclick="askClearAll()">Clear all</button>'}
-function doClearAll(){var ids=getFiltered().map(function(e){return e.id});if(!ids.length)return;fetch(SB+'/rest/v1/events?id=in.('+ids.join(',')+')',{method:'DELETE',headers:sbHeaders()}).then(function(r){if(r.ok){cancelClearAll();loadData()}})}
-
-// GOAL
-function getMonthlyRevenue(){var m=new Date().toISOString().slice(0,7);var ev=allEvents.filter(function(e){return e.event==='purchase'&&e.source!=='offerCode'&&e.created_at&&e.created_at.startsWith(m)});var t=0;ev.forEach(function(e){t+=toUSD(e.price,e.currency)});return Math.round(t*100)/100}
-function getGoal(){return parseFloat(localStorage.getItem('revenueGoal')||'50')}
-function renderGoal(){var g=getGoal(),c=getMonthlyRevenue(),p=g>0?Math.min(Math.round(c/g*100),100):0;var ms=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];document.getElementById('goalMonth').textContent=ms[new Date().getMonth()]+' '+new Date().getFullYear()+' Goal';var bc=p>=100?'#4ade80':p>=50?'#C8A45C':'#60a5fa';var st='',sc='#888';if(p>=100){st='Goal reached!';sc='#4ade80'}else if(p>=75){st='Almost there!';sc='#C8A45C'}else if(p>=50){st='Halfway!';sc='#C8A45C'}else if(c>0){st='$'+(g-c).toFixed(2)+' to go'}else st='Waiting for first sale';document.getElementById('goalContent').innerHTML='<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px"><span style="font-size:24px;font-weight:600;color:'+bc+'">$'+c.toFixed(2)+'</span><span style="font-size:14px;color:#555">/ $'+g.toFixed(0)+'</span></div><div style="height:8px;background:#111;border-radius:4px;overflow:hidden;margin-bottom:6px"><div style="height:100%;width:'+p+'%;background:'+bc+';border-radius:4px;transition:width .5s"></div></div><div style="display:flex;justify-content:space-between"><span style="font-size:11px;color:'+sc+'">'+st+'</span><span style="font-size:11px;color:#555">'+p+'%</span></div>';var gk='goalCel_'+new Date().toISOString().slice(0,7);if(p>=100&&!localStorage.getItem(gk)){localStorage.setItem(gk,'true');fireworks();fireworks();confetti();showToast('Monthly goal reached!','iap')}}
-function editGoal(){document.getElementById('goalInput').value=getGoal();document.getElementById('goalContent').style.display='none';document.getElementById('goalEditBtn').style.display='none';document.getElementById('goalEditor').style.display='block'}
-function saveGoal(){var v=parseFloat(document.getElementById('goalInput').value);if(v>0){localStorage.setItem('revenueGoal',v.toString());localStorage.removeItem('goalCel_'+new Date().toISOString().slice(0,7))}cancelGoalEdit();renderGoal()}
-function cancelGoalEdit(){document.getElementById('goalContent').style.display='block';document.getElementById('goalEditBtn').style.display='inline-block';document.getElementById('goalEditor').style.display='none'}
-
-// HELPERS
-function makeBar(l,v,m,c){var p=m>0?Math.round(v/m*100):0;return'<div class="bar-row"><div class="bar-label">'+l+'</div><div class="bar-track"><div class="bar-fill" style="width:'+p+'%;background:'+c+'"></div></div><div class="bar-value">'+v+'</div></div>'}
-function makeWideBar(l,v,m,c){var p=m>0?Math.round(v/m*100):0;return'<div class="bar-row"><div style="font-size:11px;color:#666;width:72px;text-align:right;flex-shrink:0">'+l+'</div><div class="bar-track"><div class="bar-fill" style="width:'+p+'%;background:'+c+'"></div></div><div class="bar-value">'+v+'</div></div>'}
-function growthBadge(t,y,s){if(y===0&&t===0)return'<span class="growth-flat">—</span>';if(y===0)return'<span class="growth-up">new</span>';var p=Math.round((t-y)/y*100);if(p>0)return'<span class="growth-up">↑'+p+'%'+(s||'')+'</span>';if(p<0)return'<span class="growth-down">↓'+Math.abs(p)+'%'+(s||'')+'</span>';return'<span class="growth-flat">→ 0%</span>'}
-function formatSize(b){if(!b)return'0 B';if(b<1024)return b+' B';if(b<1048576)return(b/1024).toFixed(1)+' KB';return(b/1048576).toFixed(1)+' MB'}
-function fileIcon(name){var ext=(name||'').split('.').pop().toLowerCase();if(['jpg','jpeg','png','gif','webp','heic'].indexOf(ext)>=0)return'🖼️';if(['pdf'].indexOf(ext)>=0)return'📄';if(['mp4','mov','m4v'].indexOf(ext)>=0)return'🎬';if(['mp3','m4a','wav'].indexOf(ext)>=0)return'🎵';if(['zip','gz','tar'].indexOf(ext)>=0)return'📦';if(['swift','js','html','css','json'].indexOf(ext)>=0)return'💻';return'📎'}
-
-// CHART
-function buildChart(ev){var td=new Date().toISOString().slice(0,10),bu=[],la=[],ti='';if(currentTime==='today'){ti='Today by hour';for(var h=0;h<24;h++){var hh=h.toString().padStart(2,'0');bu.push(ev.filter(function(e){return e.created_at&&e.created_at.startsWith(td+'T'+hh)}).length);la.push(h%6===0?hh+':00':'')}}else if(currentTime==='7d'){ti='Last 7 days';var dn=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];for(var i=6;i>=0;i--){var d=new Date(Date.now()-i*864e5),ds=d.toISOString().slice(0,10);bu.push(ev.filter(function(e){return e.created_at&&e.created_at.startsWith(ds)}).length);la.push(dn[d.getDay()])}}else if(currentTime==='30d'){ti='Last 30 days';for(var i=29;i>=0;i--){var d=new Date(Date.now()-i*864e5),ds=d.toISOString().slice(0,10);bu.push(ev.filter(function(e){return e.created_at&&e.created_at.startsWith(ds)}).length);la.push(i%7===0?d.getDate()+'/'+(d.getMonth()+1):'')}}else{ti='All time (weekly)';if(!ev.length)return{title:ti,html:'<div class="empty">No data yet</div>'};var so=ev.slice().sort(function(a,b){return new Date(a.created_at)-new Date(b.created_at)});var fi=new Date(so[0].created_at),nw=new Date(),wk=Math.ceil((nw-fi)/(7*864e5))||1;if(wk>52)wk=52;for(var w=wk-1;w>=0;w--){var wS=new Date(nw-(w+1)*7*864e5),wE=new Date(nw-w*7*864e5);bu.push(ev.filter(function(e){var d=new Date(e.created_at);return d>=wS&&d<wE}).length);var lb=wS.getDate()+'/'+(wS.getMonth()+1);la.push(wk<=12?lb:(w%4===0?lb:''))}}var mx=Math.max.apply(null,bu)||1;return{title:ti,html:bu.map(function(c,i){var h=Math.max(2,Math.round(c/mx*70)),cl=i===bu.length-1?'#C8A45C':'#60a5fa';return'<div class="chart-bar-wrap"><div style="font-size:8px;color:#888">'+(c>0?c:'')+'</div><div class="chart-bar" style="height:'+h+'px;background:'+cl+'"></div><div class="chart-label">'+la[i]+'</div></div>'}).join('')}}
-
-// RENDER DASHBOARD
-function render(){var ev=getFiltered(),td=new Date().toISOString().slice(0,10);var dl=ev.filter(function(e){return e.event==='download'}),newDL=dl.filter(function(e){return e.source!=='update'}),updDL=dl.filter(function(e){return e.source==='update'}),pr=ev.filter(function(e){return e.event==='purchase'}),paid=pr.filter(function(e){return e.source!=='offerCode'}),codes=pr.filter(function(e){return e.source==='offerCode'});var rv=0;paid.forEach(function(e){rv+=toUSD(e.price,e.currency)});var proc=rv*0.85,arpu=dl.length>0?rv/dl.length:0,conv=dl.length>0?((pr.length/dl.length)*100).toFixed(1):'0';var dG='',pG='',rG='';if(currentTime==='today'){var yE=getYesterday(),yDL=yE.filter(function(e){return e.event==='download'}).length,yPR=yE.filter(function(e){return e.event==='purchase'}).length,yRv=0;yE.filter(function(e){return e.event==='purchase'&&e.source!=='offerCode'}).forEach(function(e){yRv+=toUSD(e.price,e.currency)});dG=' '+growthBadge(dl.length,yDL,' vs yday');pG=' '+growthBadge(pr.length,yPR,' vs yday');rG=' '+growthBadge(Math.round(rv),Math.round(yRv),' vs yday')}
-document.getElementById('totalDownloads').textContent=dl.length;document.getElementById('dlSub').innerHTML=newDL.length+' new / '+updDL.length+' updates'+dG;document.getElementById('totalPurchases').textContent=pr.length;document.getElementById('prSub').innerHTML=codes.length+' codes / '+paid.length+' paid'+pG;document.getElementById('totalRevenue').textContent='$'+rv.toFixed(2);document.getElementById('revSub').innerHTML='gross'+rG;document.getElementById('totalProceeds').textContent='$'+proc.toFixed(2);document.getElementById('conversionRate').textContent=conv+'%';document.getElementById('arpu').textContent='$'+arpu.toFixed(2);renderGoal();
-var ch=buildChart(ev);document.getElementById('chartTitle').textContent=ch.title;document.getElementById('dynamicChart').innerHTML=ch.html;
-var bC={};paid.forEach(function(e){var c=e.currency||'USD';if(!bC[c])bC[c]={total:0,count:0};bC[c].total+=parseFloat(e.price||0);bC[c].count++});if(codes.length>0)bC['FREE']={total:0,count:codes.length};var cK=Object.keys(bC).sort(function(a,b){return bC[b].total-bC[a].total});var rH='';cK.forEach(function(c){var d=bC[c],dV=c==='FREE'?d.count+' codes':d.total.toFixed(2)+' '+c,uL=(c==='FREE'||c==='USD')?'':' (~$'+(d.total/(fxRates[c]||1)).toFixed(2)+')';rH+='<div class="stat-row"><span style="font-size:13px;color:#888">'+(c==='FREE'?'Offer codes':c)+' <span style="color:#555">('+d.count+')</span></span><span style="font-size:13px;font-weight:500;color:'+(c==='FREE'?'#C8A45C':'#4ade80')+'">'+dV+uL+'</span></div>'});document.getElementById('revenueByCurrency').innerHTML=rH||'<div class="empty">No revenue yet</div>';
-var tP=pr.length||1;document.getElementById('sourceBreakdown').innerHTML=pr.length>0?makeBar('Paid',paid.length,tP,'#4ade80')+makeBar('Code',codes.length,tP,'#C8A45C'):'<div class="empty">No purchases yet</div>';
-var co={};ev.forEach(function(e){var l=(e.locale||'??').toUpperCase();co[l]=(co[l]||0)+1});var sC=Object.entries(co).sort(function(a,b){return b[1]-a[1]}).slice(0,8),mC=sC.length>0?sC[0][1]:1;document.getElementById('countryBars').innerHTML=sC.length>0?sC.map(function(c){return makeBar(c[0],c[1],mC,'#60a5fa')}).join(''):'<div class="empty">No data yet</div>';
-var dv={};ev.forEach(function(e){var d=e.device||'??';dv[d]=(dv[d]||0)+1});var sD=Object.entries(dv).sort(function(a,b){return b[1]-a[1]}).slice(0,6),mD=sD.length>0?sD[0][1]:1;document.getElementById('deviceBars').innerHTML=sD.length>0?sD.map(function(d){return makeWideBar(d[0],d[1],mD,'#a78bfa')}).join(''):'<div class="empty">No data yet</div>';
-var rc=ev.slice(0,30);document.getElementById('emptyState').style.display=rc.length===0?'block':'none';document.getElementById('eventsTable').innerHTML=rc.map(function(e){var dt=new Date(e.created_at),tm=dt.toLocaleDateString('tr-TR',{month:'short',day:'numeric'})+' '+dt.toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'});var bg=e.event==='download'?(e.source==='update'?'<span class="badge badge-update">update</span>':'<span class="badge badge-dl">new</span>'):e.source==='offerCode'?'<span class="badge badge-offer">offer code</span>':'<span class="badge badge-iap">purchase</span>';var det='';if(e.event==='purchase'&&e.price){var u=toUSD(e.price,e.currency);det=e.price+' '+(e.currency||'USD');if(e.currency&&e.currency!=='USD')det+=' ($'+u.toFixed(2)+')'}else if(e.locale)det=e.locale.toUpperCase();var al=e.app==='yula'?'<span style="font-size:9px;color:#60a5fa;margin-left:4px">Y</span>':'';return'<tr><td style="white-space:nowrap;font-size:11px;color:#666">'+tm+'</td><td>'+bg+al+'</td><td style="font-size:12px;color:#888">'+det+'</td><td id="del-'+e.id+'"><button class="btn-del" onclick="showDeleteConfirm('+e.id+')">✕</button></td></tr>'}).join('')}
-
-// NOTES
-function loadNotes(){fetch(SB+'/rest/v1/notes?select=*&order=created_at.desc&limit=500',{headers:sbHeaders()}).then(function(r){return r.json()}).then(function(d){allNotes=d;renderNotes()}).catch(function(){renderNotes()})}
-function addNote(){var inp=document.getElementById('noteInput'),t=inp.value.trim();if(!t)return;fetch(SB+'/rest/v1/notes',{method:'POST',headers:sbHeaders(),body:JSON.stringify({text:t,tag:currentNoteTag})}).then(function(r){if(r.ok){inp.value='';loadNotes()}})}
-function deleteNote(id){fetch(SB+'/rest/v1/notes?id=eq.'+id,{method:'DELETE',headers:sbHeaders()}).then(function(r){if(r.ok)loadNotes()})}
-function toggleDone(id,done){fetch(SB+'/rest/v1/notes?id=eq.'+id,{method:'PATCH',headers:sbHeaders(),body:JSON.stringify({done:done})}).then(function(r){if(r.ok)loadNotes()})}
-function editNote(id){var n=allNotes.find(function(x){return x.id===id});if(!n)return;var el=document.getElementById('note-card-'+id);if(!el)return;el.innerHTML='<div style="display:flex;flex-direction:column;gap:6px;width:100%"><textarea id="en-text-'+id+'" rows="3" style="background:#0a0a0a;border:1px solid #333;border-radius:8px;padding:8px 10px;color:#e5e5e5;font-size:13px;font-family:inherit;resize:vertical;line-height:1.4">'+n.text.replace(/</g,'&lt;')+'</textarea><div style="display:flex;gap:6px"><button class="note-tag'+(n.tag==='general'?' active':'')+'" onclick="setEditNoteTag('+id+',\'general\',this)">General</button><button class="note-tag'+(n.tag==='pc'?' active':'')+'" onclick="setEditNoteTag('+id+',\'pc\',this)">PC</button><button class="note-tag'+(n.tag==='yula'?' active':'')+'" onclick="setEditNoteTag('+id+',\'yula\',this)">Yula</button></div><div style="display:flex;gap:6px"><button onclick="saveNoteEdit('+id+')" style="flex:1;background:#C8A45C;color:#0a0a0a;border:none;border-radius:6px;padding:8px;font-size:12px;font-weight:600;cursor:pointer">Save</button><button onclick="loadNotes()" style="flex:1;background:none;border:1px solid #333;color:#888;border-radius:6px;padding:8px;font-size:12px;cursor:pointer">Cancel</button></div></div>';window._editNoteTag=n.tag}
-function setEditNoteTag(id,tag,btn){window._editNoteTag=tag;var btns=btn.parentElement.querySelectorAll('.note-tag');for(var i=0;i<btns.length;i++)btns[i].classList.remove('active');btn.classList.add('active')}
-function saveNoteEdit(id){var t=document.getElementById('en-text-'+id).value.trim();if(!t)return;fetch(SB+'/rest/v1/notes?id=eq.'+id,{method:'PATCH',headers:sbHeaders(),body:JSON.stringify({text:t,tag:window._editNoteTag||'general'})}).then(function(r){if(r.ok)loadNotes()})}
-function setNoteTag(t,b){currentNoteTag=t;var tags=document.querySelectorAll('#tab-notes .note-tag');for(var i=0;i<tags.length;i++)tags[i].classList.remove('active');b.classList.add('active')}
-function renderNotes(){var el=document.getElementById('notesGrouped'),em=document.getElementById('notesEmpty');if(!allNotes.length){el.innerHTML='';em.style.display='block';return}em.style.display='none';var pending=allNotes.filter(function(n){return!n.done});var completed=allNotes.filter(function(n){return n.done});var html='';var order=[{key:'general',label:'General'},{key:'pc',label:'PersonalCapsule'},{key:'yula',label:'Yula'}];if(pending.length>0){html+='<div class="section"><div class="section-title"><span>Bekleyen</span><span style="font-size:11px;color:#555">'+pending.length+'</span></div>';order.forEach(function(g){var notes=pending.filter(function(n){return(n.tag||'general')===g.key});if(!notes.length)return;html+='<div class="note-group note-group-'+g.key+'"><div class="note-group-title">'+g.label+'</div>';notes.forEach(function(n){var dt=new Date(n.created_at),tm=dt.toLocaleDateString('tr-TR',{month:'short',day:'numeric'})+' '+dt.toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'});html+='<div class="note-row" id="note-card-'+n.id+'"><button onclick="toggleDone('+n.id+',true)" style="background:none;border:1.5px solid #333;width:20px;height:20px;border-radius:5px;cursor:pointer;flex-shrink:0;padding:0"></button><div class="note-row-text">'+n.text.replace(/</g,'&lt;').replace(/\n/g,'<br>')+'</div><span class="note-row-time">'+tm+'</span><button class="btn-del" onclick="editNote('+n.id+')" style="font-size:12px;color:#555">✎</button><button class="btn-del" onclick="deleteNote('+n.id+')">✕</button></div>'});html+='</div>'});html+='</div>'}if(completed.length>0){var isOpen=window._doneOpen||false;html+='<div class="section"><div class="section-title" onclick="toggleDoneSection()" style="cursor:pointer"><span>'+(isOpen?'▾':'▸')+' Yapılanlar</span><span style="font-size:11px;color:#555">'+completed.length+'</span></div>';if(isOpen){order.forEach(function(g){var notes=completed.filter(function(n){return(n.tag||'general')===g.key});if(!notes.length)return;html+='<div class="note-group note-group-'+g.key+'"><div class="note-group-title">'+g.label+'</div>';notes.forEach(function(n){var dt=new Date(n.created_at),tm=dt.toLocaleDateString('tr-TR',{month:'short',day:'numeric'})+' '+dt.toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'});html+='<div class="note-row" id="note-card-'+n.id+'" style="opacity:0.6"><button onclick="toggleDone('+n.id+',false)" style="background:#C8A45C;border:1.5px solid #C8A45C;width:20px;height:20px;border-radius:5px;cursor:pointer;flex-shrink:0;padding:0;display:flex;align-items:center;justify-content:center"><span style="color:#0a0a0a;font-size:12px;font-weight:700">✓</span></button><div class="note-row-text">'+n.text.replace(/</g,'&lt;').replace(/\n/g,'<br>')+'</div><span class="note-row-time">'+tm+'</span><button class="btn-del" onclick="deleteNote('+n.id+')">✕</button></div>'});html+='</div>'})}html+='</div>'}el.innerHTML=html}
-function toggleDoneSection(){window._doneOpen=!window._doneOpen;renderNotes()}
-
-// MARKETING
-function loadCampaigns(){fetch(SB+'/rest/v1/campaigns?select=*&order=created_at.desc&limit=200',{headers:sbHeaders()}).then(function(r){return r.json()}).then(function(d){allCampaigns=d;renderCampaigns()}).catch(function(){renderCampaigns()})}
-function addCampaign(){var p=document.getElementById('mktPlatform').value,a=document.getElementById('mktApp').value,n=document.getElementById('mktName').value.trim(),c=document.getElementById('mktCode').value.trim(),nt=document.getElementById('mktNotes').value.trim();if(!n)return;fetch(SB+'/rest/v1/campaigns',{method:'POST',headers:sbHeaders(),body:JSON.stringify({platform:p,app:a,name:n,code:c||null,notes:nt||null})}).then(function(r){if(r.ok){document.getElementById('mktName').value='';document.getElementById('mktCode').value='';document.getElementById('mktNotes').value='';loadCampaigns()}})}
-function deleteCampaign(id){fetch(SB+'/rest/v1/campaigns?id=eq.'+id,{method:'DELETE',headers:sbHeaders()}).then(function(r){if(r.ok)loadCampaigns()})}
-function showResultInput(id){var el=document.getElementById('mkt-result-'+id);if(!el)return;var camp=allCampaigns.find(function(c){return c.id===id});var existing=camp&&camp.result?camp.result:'';el.innerHTML='<div style="display:flex;gap:6px;margin-top:6px"><input type="text" id="mkt-result-input-'+id+'" value="'+existing.replace(/"/g,'&quot;')+'" placeholder="Result" style="flex:1;background:#0a0a0a;border:1px solid #333;border-radius:6px;padding:6px 10px;color:#e5e5e5;font-size:12px" onkeydown="if(event.key===\'Enter\')saveResult('+id+')"/><button onclick="saveResult('+id+')" style="background:#C8A45C;color:#0a0a0a;border:none;border-radius:6px;padding:6px 10px;font-size:11px;font-weight:600;cursor:pointer">Save</button></div>'}
-function saveResult(id){var inp=document.getElementById('mkt-result-input-'+id);if(!inp)return;fetch(SB+'/rest/v1/campaigns?id=eq.'+id,{method:'PATCH',headers:sbHeaders(),body:JSON.stringify({result:inp.value.trim()||null})}).then(function(r){if(r.ok)loadCampaigns()})}
-function editCampaign(id){var c=allCampaigns.find(function(x){return x.id===id});if(!c)return;var el=document.getElementById('mkt-card-'+id);if(!el)return;el.innerHTML='<div class="mkt-form" style="display:flex;flex-direction:column;gap:6px"><select id="ec-app-'+id+'"><option value="all"'+(c.app==='all'?' selected':'')+'>All</option><option value="personalcapsule"'+(c.app==='personalcapsule'?' selected':'')+'>PC</option><option value="yula"'+(c.app==='yula'?' selected':'')+'>Yula</option></select><select id="ec-plat-'+id+'"><option value="reddit"'+(c.platform==='reddit'?' selected':'')+'>Reddit</option><option value="tiktok"'+(c.platform==='tiktok'?' selected':'')+'>TikTok</option><option value="apple_ads"'+(c.platform==='apple_ads'?' selected':'')+'>Apple Ads</option><option value="twitter"'+(c.platform==='twitter'?' selected':'')+'>Twitter/X</option><option value="other"'+(c.platform==='other'?' selected':'')+'>Other</option></select><input type="text" id="ec-name-'+id+'" value="'+c.name.replace(/"/g,'&quot;')+'"/><input type="text" id="ec-code-'+id+'" value="'+(c.code||'').replace(/"/g,'&quot;')+'" placeholder="Code"/><input type="text" id="ec-notes-'+id+'" value="'+(c.notes||'').replace(/"/g,'&quot;')+'" placeholder="Notes"/><input type="text" id="ec-result-'+id+'" value="'+(c.result||'').replace(/"/g,'&quot;')+'" placeholder="Result"/><div style="display:flex;gap:6px"><button onclick="saveCampaignEdit('+id+')" style="flex:1;background:#C8A45C;color:#0a0a0a;border:none;border-radius:6px;padding:8px;font-size:12px;font-weight:600;cursor:pointer">Save</button><button onclick="loadCampaigns()" style="flex:1;background:none;border:1px solid #333;color:#888;border-radius:6px;padding:8px;font-size:12px;cursor:pointer">Cancel</button></div></div>'}
-function saveCampaignEdit(id){var a=document.getElementById('ec-app-'+id).value,p=document.getElementById('ec-plat-'+id).value,n=document.getElementById('ec-name-'+id).value.trim(),c=document.getElementById('ec-code-'+id).value.trim(),nt=document.getElementById('ec-notes-'+id).value.trim(),r=document.getElementById('ec-result-'+id).value.trim();if(!n)return;fetch(SB+'/rest/v1/campaigns?id=eq.'+id,{method:'PATCH',headers:sbHeaders(),body:JSON.stringify({app:a,platform:p,name:n,code:c||null,notes:nt||null,result:r||null})}).then(function(r){if(r.ok)loadCampaigns()})}
-function renderCampaigns(){var el=document.getElementById('mktList'),em=document.getElementById('mktEmpty');document.getElementById('mktCount').textContent=allCampaigns.length>0?allCampaigns.length+' campaigns':'';if(!allCampaigns.length){el.innerHTML='';em.style.display='block';return}em.style.display='none';el.innerHTML=allCampaigns.map(function(c){var dt=new Date(c.created_at),tm=dt.toLocaleDateString('tr-TR',{month:'short',day:'numeric',year:'numeric'});var pl=c.platform.replace('_',' ');var appLabel=c.app==='personalcapsule'?'PC':c.app==='yula'?'Yula':'All',appClass='mkt-app-'+(c.app||'all');var resultHtml='';if(c.result){resultHtml='<div id="mkt-result-'+c.id+'" style="margin-top:6px;padding:6px 10px;background:#0a1a0a;border-radius:6px;font-size:12px;color:#4ade80;display:flex;justify-content:space-between;align-items:center"><span>✓ '+c.result.replace(/</g,'&lt;')+'</span><button class="btn-del" onclick="showResultInput('+c.id+')" style="font-size:12px;color:#555">✎</button></div>'}else{resultHtml='<div id="mkt-result-'+c.id+'"><button onclick="showResultInput('+c.id+')" style="background:none;border:1px dashed #333;border-radius:6px;padding:4px 10px;color:#555;font-size:11px;cursor:pointer;margin-top:6px">+ Add result</button></div>'}return'<div class="mkt-item" id="mkt-card-'+c.id+'"><div style="display:flex;justify-content:space-between;align-items:start"><div style="flex:1"><div style="display:flex;gap:6px;align-items:center;margin-bottom:4px"><span class="mkt-platform mkt-'+c.platform+'">'+pl.toUpperCase()+'</span><span class="mkt-app '+appClass+'">'+appLabel+'</span><span style="font-size:10px;color:#444">'+tm+'</span></div><div style="font-size:14px;color:#e5e5e5;margin-bottom:4px">'+c.name.replace(/</g,'&lt;')+'</div>'+(c.code?'<div style="font-size:11px;color:#C8A45C">Code: '+c.code+'</div>':'')+(c.notes?'<div style="font-size:11px;color:#666;margin-top:2px">'+c.notes.replace(/</g,'&lt;')+'</div>':'')+resultHtml+'</div><div style="display:flex;flex-direction:column;gap:4px"><button class="btn-del" onclick="editCampaign('+c.id+')" style="font-size:12px;color:#555">✎</button><button class="btn-del" onclick="deleteCampaign('+c.id+')">✕</button></div></div></div>'}).join('')}
-
-// INSIGHTS
-function renderInsights(){renderWeeklyReport();renderBestPerformers();renderCohort()}
-function renderWeeklyReport(){var now=new Date(),thisStart=new Date(now-((now.getDay()||7)-1)*864e5);thisStart.setHours(0,0,0,0);var lastStart=new Date(thisStart-7*864e5),lastEnd=new Date(thisStart);var thisW=allEvents.filter(function(e){return new Date(e.created_at)>=thisStart}),lastW=allEvents.filter(function(e){var d=new Date(e.created_at);return d>=lastStart&&d<lastEnd});var tDL=thisW.filter(function(e){return e.event==='download'}).length,lDL=lastW.filter(function(e){return e.event==='download'}).length;var tPR=thisW.filter(function(e){return e.event==='purchase'}).length,lPR=lastW.filter(function(e){return e.event==='purchase'}).length;var tRv=0,lRv=0;thisW.filter(function(e){return e.event==='purchase'&&e.source!=='offerCode'}).forEach(function(e){tRv+=toUSD(e.price,e.currency)});lastW.filter(function(e){return e.event==='purchase'&&e.source!=='offerCode'}).forEach(function(e){lRv+=toUSD(e.price,e.currency)});
-var html='<div class="grid" style="margin-bottom:0">';html+='<div class="insight-card"><div class="insight-label">Downloads</div><div class="insight-value blue">'+tDL+'</div><div class="insight-sub">last week: '+lDL+' '+growthBadge(tDL,lDL)+'</div></div>';html+='<div class="insight-card"><div class="insight-label">Purchases</div><div class="insight-value green">'+tPR+'</div><div class="insight-sub">last week: '+lPR+' '+growthBadge(tPR,lPR)+'</div></div>';html+='<div class="insight-card"><div class="insight-label">Revenue</div><div class="insight-value gold">$'+tRv.toFixed(2)+'</div><div class="insight-sub">last week: $'+lRv.toFixed(2)+' '+growthBadge(Math.round(tRv),Math.round(lRv))+'</div></div>';html+='<div class="insight-card"><div class="insight-label">Proceeds</div><div class="insight-value teal">$'+(tRv*0.85).toFixed(2)+'</div><div class="insight-sub">after Apple 15%</div></div></div>';
-var days={};thisW.forEach(function(e){var d=e.created_at.slice(0,10);days[d]=(days[d]||0)+1});var bestDay=Object.entries(days).sort(function(a,b){return b[1]-a[1]})[0];if(bestDay){var bd=new Date(bestDay[0]);html+='<div style="margin-top:10px;font-size:12px;color:#888">Best day: <span style="color:#C8A45C">'+bd.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})+'</span> ('+bestDay[1]+' events)</div>'}
-document.getElementById('weeklyReport').innerHTML=html||'<div class="empty">No data this week</div>'}
-function renderBestPerformers(){var co={},dv={};allEvents.forEach(function(e){var l=(e.locale||'??').toUpperCase();co[l]=(co[l]||0)+1;var d=e.device||'??';dv[d]=(dv[d]||0)+1});var topC=Object.entries(co).sort(function(a,b){return b[1]-a[1]})[0];var topD=Object.entries(dv).sort(function(a,b){return b[1]-a[1]})[0];var topRev={};allEvents.filter(function(e){return e.event==='purchase'&&e.source!=='offerCode'}).forEach(function(e){var l=(e.locale||'??').toUpperCase();topRev[l]=(topRev[l]||0)+toUSD(e.price,e.currency)});var topRC=Object.entries(topRev).sort(function(a,b){return b[1]-a[1]})[0];
-var html='<div class="grid" style="margin-bottom:0">';html+='<div class="insight-card"><div class="insight-label">Top Country</div><div class="insight-value blue">'+(topC?topC[0]:'—')+'</div><div class="insight-sub">'+(topC?topC[1]+' events':'no data')+'</div></div>';html+='<div class="insight-card"><div class="insight-label">Top Device</div><div class="insight-value purple">'+(topD?topD[0]:'—')+'</div><div class="insight-sub">'+(topD?topD[1]+' events':'no data')+'</div></div>';html+='<div class="insight-card"><div class="insight-label">Top Revenue</div><div class="insight-value gold">'+(topRC?topRC[0]:'—')+'</div><div class="insight-sub">'+(topRC?'$'+topRC[1].toFixed(2):'no revenue')+'</div></div>';
-var totalDays=0;if(allEvents.length>0){var so=allEvents.slice().sort(function(a,b){return new Date(a.created_at)-new Date(b.created_at)});totalDays=Math.ceil((new Date()-new Date(so[0].created_at))/864e5)||1}var avgDaily=totalDays>0?(allEvents.filter(function(e){return e.event==='download'}).length/totalDays).toFixed(1):'0';html+='<div class="insight-card"><div class="insight-label">Avg Daily DL</div><div class="insight-value blue">'+avgDaily+'</div><div class="insight-sub">over '+totalDays+' days</div></div></div>';
-document.getElementById('bestPerformers').innerHTML=html}
-function renderCohort(){var weeks=[],now=new Date();for(var w=3;w>=0;w--){var wS=new Date(now-(w+1)*7*864e5),wE=new Date(now-w*7*864e5);var wDL=allEvents.filter(function(e){var d=new Date(e.created_at);return e.event==='download'&&d>=wS&&d<wE});var wPR=allEvents.filter(function(e){var d=new Date(e.created_at);return e.event==='purchase'&&d>=wS&&d<wE});weeks.push({label:wS.getDate()+'/'+(wS.getMonth()+1),dl:wDL.length,pr:wPR.length,conv:wDL.length>0?Math.round(wPR.length/wDL.length*100):0})}
-if(!allEvents.length){document.getElementById('cohortAnalysis').innerHTML='<div class="empty">Need more data</div>';return}
-var maxDL=Math.max.apply(null,weeks.map(function(w){return w.dl}))||1;var html='<div style="margin-bottom:8px;display:flex;gap:4px;align-items:center"><div style="width:50px"></div><div style="flex:1;text-align:center;font-size:9px;color:#555">Downloads</div><div style="flex:1;text-align:center;font-size:9px;color:#555">Purchases</div><div style="width:40px;text-align:center;font-size:9px;color:#555">Conv</div></div>';
-weeks.forEach(function(w){var dlP=Math.round(w.dl/maxDL*100);var dlC=dlP>60?'rgba(96,165,250,0.4)':dlP>30?'rgba(96,165,250,0.25)':'rgba(96,165,250,0.1)';var prC=w.conv>20?'rgba(74,222,128,0.4)':w.conv>5?'rgba(74,222,128,0.25)':'rgba(74,222,128,0.1)';html+='<div class="cohort-row"><div class="cohort-label">'+w.label+'</div><div class="cohort-cell" style="background:'+dlC+';color:#60a5fa">'+w.dl+'</div><div class="cohort-cell" style="background:'+prC+';color:#4ade80">'+w.pr+'</div><div style="width:40px;text-align:center;font-size:10px;color:'+(w.conv>10?'#4ade80':'#888')+'">'+w.conv+'%</div></div>'});
-document.getElementById('cohortAnalysis').innerHTML=html}
-
-// STORAGE
-function filterFolder(f,btn){currentFolder=f;var tabs=document.querySelectorAll('.folder-tab');for(var i=0;i<tabs.length;i++)tabs[i].classList.remove('active');btn.classList.add('active');renderFiles()}
-function updateUploadLabel(){var sel=document.getElementById('uploadFolderSelect');document.getElementById('uploadFolder').textContent='Folder: '+(sel.value||'Root')}
-function loadFiles(){fetch(SB+'/storage/v1/object/list/files',{method:'POST',headers:sbHeaders(),body:JSON.stringify({prefix:'',limit:500,sortBy:{column:'created_at',order:'desc'}})}).then(function(r){return r.json()}).then(function(d){allFiles=[];if(Array.isArray(d)){d.forEach(function(item){if(item.name&&!item.name.endsWith('/'))allFiles.push({name:item.name,size:item.metadata?item.metadata.size:0,created:item.created_at||item.updated_at,folder:''});if(item.name&&item.id===null){loadSubFolder(item.name)}})}renderFiles();renderStorageUsage()}).catch(function(e){console.log('[Storage] list error:',e);renderFiles()})}
-function loadSubFolder(folder){fetch(SB+'/storage/v1/object/list/files',{method:'POST',headers:sbHeaders(),body:JSON.stringify({prefix:folder+'/',limit:500,sortBy:{column:'created_at',order:'desc'}})}).then(function(r){return r.json()}).then(function(d){if(Array.isArray(d)){d.forEach(function(item){if(item.name&&item.id!==null)allFiles.push({name:item.name,size:item.metadata?item.metadata.size:0,created:item.created_at||item.updated_at,folder:folder})})}renderFiles();renderStorageUsage()}).catch(function(){})}
-function handleUpload(files){if(!files||!files.length)return;var folder=document.getElementById('uploadFolderSelect').value;for(var i=0;i<files.length;i++){(function(file){var path=folder?folder+'/'+file.name:file.name;fetch(SB+'/storage/v1/object/files/'+encodeURIComponent(path),{method:'POST',headers:{'apikey':SK,'Authorization':'Bearer '+SK,'Content-Type':file.type||'application/octet-stream','x-upsert':'true'},body:file}).then(function(r){if(r.ok){showToast('Uploaded: '+file.name,'dl');loadFiles()}else{r.json().then(function(d){showToast('Error: '+(d.message||'upload failed'),'iap')}).catch(function(){showToast('Upload failed','iap')})}}).catch(function(){showToast('Upload failed','iap')})})(files[i])}document.getElementById('fileInput').value=''}
-function downloadFile(folder,name){var path=folder?folder+'/'+name:name;fetch(SB+'/storage/v1/object/sign/files/'+encodeURIComponent(path),{method:'POST',headers:sbHeaders(),body:JSON.stringify({expiresIn:3600})}).then(function(r){return r.json()}).then(function(d){if(d.signedURL){window.open(SB+d.signedURL,'_blank')}}).catch(function(){showToast('Download failed','iap')})}
-function deleteFile(folder,name){var path=folder?folder+'/'+name:name;fetch(SB+'/storage/v1/object/files',{method:'DELETE',headers:sbHeaders(),body:JSON.stringify({prefixes:[path]})}).then(function(r){if(r.ok){showToast('Deleted: '+name,'dl');loadFiles()}}).catch(function(){showToast('Delete failed','iap')})}
-function renderFiles(){var filtered=currentFolder?allFiles.filter(function(f){return f.folder===currentFolder}):allFiles;var el=document.getElementById('fileList'),em=document.getElementById('filesEmpty');document.getElementById('fileCount').textContent=filtered.length>0?filtered.length+' files':'';if(!filtered.length){el.innerHTML='';em.style.display='block';return}em.style.display='none';el.innerHTML=filtered.map(function(f){var dt=f.created?new Date(f.created).toLocaleDateString('tr-TR',{month:'short',day:'numeric'})+' '+new Date(f.created).toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'}):'';var folderBadge=f.folder?'<span style="font-size:9px;padding:2px 6px;border-radius:4px;background:#111;color:#666;margin-left:4px">'+f.folder+'</span>':'';return'<div class="file-item"><div class="file-icon">'+fileIcon(f.name)+'</div><div class="file-info"><div class="file-name">'+f.name+folderBadge+'</div><div class="file-meta">'+formatSize(f.size)+' · '+dt+'</div></div><div class="file-actions"><button class="btn-del" onclick="downloadFile(\''+f.folder+'\',\''+f.name.replace(/'/g,"\\'")+'\')" style="color:#60a5fa;font-size:14px" title="Download">↓</button><button class="btn-del" onclick="deleteFile(\''+f.folder+'\',\''+f.name.replace(/'/g,"\\'")+'\')" title="Delete">✕</button></div></div>'}).join('')}
-function renderStorageUsage(){var total=allFiles.reduce(function(s,f){return s+(f.size||0)},0);var pct=Math.round(total/1073741824*100*10)/10;document.getElementById('storageUsage').innerHTML='<div style="display:flex;justify-content:space-between;margin-bottom:6px"><span style="font-size:13px;color:#888">'+formatSize(total)+'</span><span style="font-size:13px;color:#555">/ 1 GB</span></div><div style="height:6px;background:#111;border-radius:3px;overflow:hidden"><div style="height:100%;width:'+Math.min(pct,100)+'%;background:#C8A45C;border-radius:3px"></div></div><div style="font-size:10px;color:#555;margin-top:4px;text-align:right">'+pct+'% used</div>'}
-
-// DRAG & DROP
-document.addEventListener('DOMContentLoaded',function(){var area=document.getElementById('uploadArea');if(!area)return;area.addEventListener('dragover',function(e){e.preventDefault();area.classList.add('dragging')});area.addEventListener('dragleave',function(){area.classList.remove('dragging')});area.addEventListener('drop',function(e){e.preventDefault();area.classList.remove('dragging');handleUpload(e.dataTransfer.files)})});
-
-// METADATA
-var allMetadata=[];
-function toggleMetaImport(){var b=document.getElementById('metaImportBody'),t=document.getElementById('metaImportSection').querySelector('.section-title span');if(b.style.display==='none'){b.style.display='block';t.textContent='▾ Import / Add Metadata'}else{b.style.display='none';t.textContent='▸ Import / Add Metadata'}}
-function loadMetadata(){fetch(SB+'/rest/v1/metadata_history?select=*&order=created_at.desc&limit=500',{headers:sbHeaders()}).then(function(r){return r.json()}).then(function(d){allMetadata=d;renderMetadata()}).catch(function(){renderMetadata()})}
-function importMetadata(){var inp=document.getElementById('metaJsonInput'),st=document.getElementById('metaImportStatus');try{var json=JSON.parse(inp.value.trim());if(!json.app||!json.locales||!Array.isArray(json.locales)){st.innerHTML='<span style="color:#f87171">Invalid format. Need: { "app": "...", "locales": [...] }</span>';return}var app=json.app,total=json.locales.length,done=0,skipped=0;json.locales.forEach(function(loc){var existing=allMetadata.find(function(m){return m.app===app&&m.locale===loc.locale&&m.title===loc.title&&m.subtitle===loc.subtitle&&m.keywords===loc.keywords});if(existing){skipped++;done++;if(done===total){st.innerHTML='<span style="color:#4ade80">Done: '+(total-skipped)+' added, '+skipped+' skipped (duplicate)</span>';if(total-skipped>0)loadMetadata()}return}fetch(SB+'/rest/v1/metadata_history',{method:'POST',headers:sbHeaders(),body:JSON.stringify({app:app,locale:loc.locale,title:loc.title||null,subtitle:loc.subtitle||null,keywords:loc.keywords||null,notes:loc.notes||null})}).then(function(r){done++;if(done===total){st.innerHTML='<span style="color:#4ade80">Done: '+(total-skipped)+' added, '+skipped+' skipped</span>';loadMetadata()}}).catch(function(){done++;if(done===total){st.innerHTML='<span style="color:#C8A45C">Partial import: '+done+'/'+total+'</span>';loadMetadata()}})})}catch(e){st.innerHTML='<span style="color:#f87171">Invalid JSON: '+e.message+'</span>'}}
-function addMetadataManual(){var app=document.getElementById('metaApp').value,loc=document.getElementById('metaLocale').value.trim(),ti=document.getElementById('metaTitle').value.trim(),sub=document.getElementById('metaSubtitle').value.trim(),kw=document.getElementById('metaKeywords').value.trim(),nt=document.getElementById('metaNotes').value.trim();if(!loc){showToast('Locale required','iap');return}fetch(SB+'/rest/v1/metadata_history',{method:'POST',headers:sbHeaders(),body:JSON.stringify({app:app,locale:loc,title:ti||null,subtitle:sub||null,keywords:kw||null,notes:nt||null})}).then(function(r){if(r.ok){document.getElementById('metaLocale').value='';document.getElementById('metaTitle').value='';document.getElementById('metaSubtitle').value='';document.getElementById('metaKeywords').value='';document.getElementById('metaNotes').value='';loadMetadata();showToast('Metadata saved','dl')}})}
-function deleteMetadata(id){fetch(SB+'/rest/v1/metadata_history?id=eq.'+id,{method:'DELETE',headers:sbHeaders()}).then(function(r){if(r.ok)loadMetadata()})}
-function getMetaPeriodStats(app,startDate,endDate){var ev=allEvents.filter(function(e){var d=new Date(e.created_at);return d>=startDate&&d<endDate&&e.app===app});var dl=ev.filter(function(e){return e.event==='download'}).length;var rev=0;ev.filter(function(e){return e.event==='purchase'&&e.source!=='offerCode'}).forEach(function(e){rev+=toUSD(e.price,e.currency)});var days=Math.max(1,Math.ceil((endDate-startDate)/864e5));return{downloads:dl,revenue:Math.round(rev*100)/100,days:days,dlPerDay:Math.round(dl/days*10)/10,revPerDay:Math.round(rev/days*100)/100,localeDL:{},localeRev:{}}}
-function getMetaVersions(){var versions=[];var sorted=allMetadata.slice().sort(function(a,b){return new Date(a.created_at)-new Date(b.created_at)});var groups=[];sorted.forEach(function(m){var ts=new Date(m.created_at).getTime();var found=groups.find(function(g){return g.app===m.app&&Math.abs(new Date(g.created_at).getTime()-ts)<60000});if(found){found.locales.push(m)}else{groups.push({app:m.app,created_at:m.created_at,locales:[m]})}});groups.sort(function(a,b){return new Date(b.created_at)-new Date(a.created_at)});groups.forEach(function(v,idx,arr){var start=new Date(v.created_at);var end=idx===0?new Date():new Date(arr[idx-1].created_at);var stats=getMetaPeriodStats(v.app,start,end);var localeBreakdown={};v.locales.forEach(function(loc){var locLang=loc.locale.split('-')[0].toLowerCase();var locEvents=allEvents.filter(function(e){var d=new Date(e.created_at);return d>=start&&d<end&&e.app===v.app&&(e.locale||'').toLowerCase()===locLang});var locDL=locEvents.filter(function(e){return e.event==='download'}).length;var locRev=0;locEvents.filter(function(e){return e.event==='purchase'&&e.source!=='offerCode'}).forEach(function(e){locRev+=toUSD(e.price,e.currency)});localeBreakdown[loc.locale]={downloads:locDL,revenue:Math.round(locRev*100)/100}});versions.push({app:v.app,created_at:v.created_at,locales:v.locales,stats:stats,localeBreakdown:localeBreakdown,isActive:idx===0,periodEnd:end})});return versions}
-function renderMetadata(){var em=document.getElementById('metaEmpty');if(!allMetadata.length){document.getElementById('metaKeyInsights').innerHTML='';document.getElementById('metaChart').innerHTML='';document.getElementById('metaVersionSummary').innerHTML='';document.getElementById('metaHeatmap').innerHTML='';document.getElementById('metaTimeline').innerHTML='';em.style.display='block';return}em.style.display='none';var versions=getMetaVersions();renderMetaInsights(versions);renderMetaChart(versions);renderMetaVersionSummary(versions);renderMetaHeatmap(versions);renderMetaTimeline(versions)}
-function renderMetaInsights(versions){var el=document.getElementById('metaKeyInsights');if(!versions.length){el.innerHTML='';return}var bestDL=versions.slice().sort(function(a,b){return b.stats.dlPerDay-a.stats.dlPerDay})[0];var bestRev=versions.slice().sort(function(a,b){return b.stats.revPerDay-a.stats.revPerDay})[0];var totalDL=versions.reduce(function(s,v){return s+v.stats.downloads},0);var totalRev=versions.reduce(function(s,v){return s+v.stats.revenue},0);var allLocales={};versions.forEach(function(v){Object.keys(v.localeBreakdown).forEach(function(l){if(!allLocales[l])allLocales[l]={dl:0,rev:0};allLocales[l].dl+=v.localeBreakdown[l].downloads;allLocales[l].rev+=v.localeBreakdown[l].revenue})});var topLocale=Object.entries(allLocales).sort(function(a,b){return b[1].dl-a[1].dl})[0];var html='<div class="section"><div class="section-title"><span>Key Insights</span></div><div class="grid" style="margin-bottom:0">';html+='<div class="insight-card"><div class="insight-label">Best DL/Day</div><div class="insight-value blue">'+bestDL.stats.dlPerDay+'</div><div class="insight-sub">'+new Date(bestDL.created_at).toLocaleDateString('tr-TR',{day:'numeric',month:'short'})+(bestDL.isActive?' (active)':'')+'</div></div>';html+='<div class="insight-card"><div class="insight-label">Best Rev/Day</div><div class="insight-value gold">$'+bestRev.stats.revPerDay+'</div><div class="insight-sub">'+new Date(bestRev.created_at).toLocaleDateString('tr-TR',{day:'numeric',month:'short'})+(bestRev.isActive?' (active)':'')+'</div></div>';html+='<div class="insight-card"><div class="insight-label">Total Downloads</div><div class="insight-value blue">'+totalDL+'</div><div class="insight-sub">across '+versions.length+' version'+(versions.length>1?'s':'')+'</div></div>';html+='<div class="insight-card"><div class="insight-label">Top Locale</div><div class="insight-value purple">'+(topLocale?topLocale[0]:'—')+'</div><div class="insight-sub">'+(topLocale?topLocale[1].dl+' downloads':'no data')+'</div></div>';html+='</div></div>';el.innerHTML=html}
-function renderMetaChart(versions){var el=document.getElementById('metaChart');if(versions.length<1){el.innerHTML='';return}var allDates=[];var now=new Date();var earliest=new Date(Math.min.apply(null,versions.map(function(v){return new Date(v.created_at)})));var days=Math.min(90,Math.ceil((now-earliest)/864e5));for(var i=days-1;i>=0;i--){var d=new Date(now-i*864e5);allDates.push(d.toISOString().slice(0,10))}var dlByDate={},revByDate={};allDates.forEach(function(d){dlByDate[d]=0;revByDate[d]=0});allEvents.forEach(function(e){var d=(e.created_at||'').slice(0,10);if(dlByDate.hasOwnProperty(d)){if(e.event==='download')dlByDate[d]++;if(e.event==='purchase'&&e.source!=='offerCode')revByDate[d]+=toUSD(e.price,e.currency)}});var maxDL=Math.max.apply(null,allDates.map(function(d){return dlByDate[d]}))||1;var versionDates=versions.map(function(v){return new Date(v.created_at).toISOString().slice(0,10)});var html='<div class="section"><div class="section-title"><span>Performance Timeline</span><span style="font-size:10px;color:#555">last '+days+'d</span></div>';html+='<div style="position:relative"><div class="chart-bars" id="metaChartBars">';allDates.forEach(function(d,idx){var h=Math.max(2,Math.round(dlByDate[d]/maxDL*70));var isVersion=versionDates.indexOf(d)>=0;var color=isVersion?'#C8A45C':'#60a5fa';var label=idx%(days>30?7:1)===0?d.slice(8,10)+'/'+d.slice(5,7):'';html+='<div class="chart-bar-wrap"><div style="font-size:7px;color:#888">'+(dlByDate[d]>0?dlByDate[d]:'')+'</div><div class="chart-bar" style="height:'+h+'px;background:'+color+(isVersion?';box-shadow:0 0 6px #C8A45C':'')+'"></div>'+(isVersion?'<div style="font-size:7px;color:#C8A45C">▲</div>':'<div class="chart-label">'+label+'</div>')+'</div>'});html+='</div></div>';html+='<div style="display:flex;gap:12px;margin-top:8px;font-size:10px"><span style="color:#60a5fa">■ Downloads</span><span style="color:#C8A45C">▲ Metadata change</span></div>';html+='</div>';el.innerHTML=html}
-function renderMetaVersionSummary(versions){var el=document.getElementById('metaVersionSummary');if(!versions.length){el.innerHTML='';return}var html='<div class="section"><div class="section-title"><span>Version Performance</span></div>';versions.forEach(function(v,idx){var dt=new Date(v.created_at);var tm=dt.toLocaleDateString('tr-TR',{day:'numeric',month:'short',year:'numeric'});var endTm=v.isActive?'now':new Date(v.periodEnd).toLocaleDateString('tr-TR',{day:'numeric',month:'short'});var locList=v.locales.map(function(l){return l.locale}).join(', ');html+='<div style="background:'+(v.isActive?'#111':'#0d0d0d')+';border-radius:10px;padding:14px;margin-bottom:8px;border-left:3px solid '+(v.isActive?'#C8A45C':'#222')+'">';html+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><span style="font-size:12px;font-weight:600;color:'+(v.isActive?'#C8A45C':'#888')+'">v'+(versions.length-idx)+' — '+tm+(v.isActive?' (active)':'')+'</span><span style="font-size:10px;color:#555">'+v.stats.days+' days</span></div>';html+='<div style="font-size:10px;color:#555;margin-bottom:8px">'+locList+' · '+tm+' → '+endTm+'</div>';html+='<div class="grid" style="margin-bottom:8px">';html+='<div style="text-align:center"><div style="font-size:18px;font-weight:600;color:#60a5fa">'+v.stats.downloads+'</div><div style="font-size:9px;color:#555">DOWNLOADS</div></div>';html+='<div style="text-align:center"><div style="font-size:18px;font-weight:600;color:#4ade80">$'+v.stats.revenue.toFixed(2)+'</div><div style="font-size:9px;color:#555">REVENUE</div></div>';html+='<div style="text-align:center"><div style="font-size:18px;font-weight:600;color:#60a5fa">'+v.stats.dlPerDay+'</div><div style="font-size:9px;color:#555">DL/DAY</div></div>';html+='<div style="text-align:center"><div style="font-size:18px;font-weight:600;color:#4ade80">$'+v.stats.revPerDay+'</div><div style="font-size:9px;color:#555">REV/DAY</div></div>';html+='</div>';if(Object.keys(v.localeBreakdown).length>0){html+='<div style="border-top:1px solid #1a1a1a;padding-top:8px;margin-top:4px"><div style="font-size:10px;color:#555;margin-bottom:6px">LOCALE BREAKDOWN</div>';Object.keys(v.localeBreakdown).sort().forEach(function(loc){var lb=v.localeBreakdown[loc];html+='<div style="display:flex;justify-content:space-between;padding:3px 0;font-size:11px"><span style="color:#888">'+loc+'</span><span><span style="color:#60a5fa;margin-right:8px">'+lb.downloads+' dl</span><span style="color:#4ade80">$'+lb.revenue.toFixed(2)+'</span></span></div>'});html+='</div>'}html+='</div>'});html+='</div>';el.innerHTML=html}
-function renderMetaHeatmap(versions){var el=document.getElementById('metaHeatmap');if(versions.length<1){el.innerHTML='';return}var allLocs={};versions.forEach(function(v){Object.keys(v.localeBreakdown).forEach(function(l){allLocs[l]=true})});var locs=Object.keys(allLocs).sort();if(!locs.length){el.innerHTML='';return}var html='<div class="section"><div class="section-title"><span>Locale × Version Heatmap</span></div>';html+='<div style="overflow-x:auto"><table style="width:100%;min-width:300px"><thead><tr><th style="font-size:9px">Locale</th>';versions.forEach(function(v,idx){html+='<th style="font-size:9px;text-align:center">v'+(versions.length-idx)+'</th>'});html+='</tr></thead><tbody>';var maxVal=0;versions.forEach(function(v){Object.values(v.localeBreakdown).forEach(function(lb){if(lb.downloads>maxVal)maxVal=lb.downloads})});locs.forEach(function(loc){html+='<tr><td style="font-size:11px;color:#60a5fa;padding:6px 0">'+loc+'</td>';versions.forEach(function(v){var lb=v.localeBreakdown[loc]||{downloads:0,revenue:0};var intensity=maxVal>0?lb.downloads/maxVal:0;var bg='rgba(96,165,250,'+Math.max(0.05,intensity*0.5)+')';html+='<td style="text-align:center;padding:6px;background:'+bg+';border-radius:4px"><div style="font-size:12px;font-weight:600;color:#60a5fa">'+lb.downloads+'</div><div style="font-size:9px;color:#4ade80">$'+lb.revenue.toFixed(2)+'</div></td>'});html+='</tr>'});html+='</tbody></table></div></div>';el.innerHTML=html}
-function renderMetaTimeline(versions){var el=document.getElementById('metaTimeline');var html='';versions.forEach(function(v){var dt=new Date(v.created_at);var tm=dt.toLocaleDateString('tr-TR',{day:'numeric',month:'short',year:'numeric'});html+='<div class="section"><div class="section-title"><span>'+(v.isActive?'🟢':'⚪')+' v'+(versions.length-versions.indexOf(v))+' — '+(v.app==='personalcapsule'?'PC':'Yula')+'</span><span style="font-size:10px;color:#555">'+tm+'</span></div>';v.locales.forEach(function(m){html+='<div style="background:#111;border-radius:8px;padding:10px 12px;margin-bottom:4px">';html+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><span style="font-size:11px;font-weight:600;color:#60a5fa">'+m.locale+'</span><button class="btn-del" onclick="deleteMetadata('+m.id+')">✕</button></div>';if(m.title)html+='<div style="font-size:12px;color:#e5e5e5;margin-bottom:2px"><span style="color:#444;font-size:9px">TITLE </span>'+m.title.replace(/</g,'&lt;')+'</div>';if(m.subtitle)html+='<div style="font-size:12px;color:#e5e5e5;margin-bottom:2px"><span style="color:#444;font-size:9px">SUBTITLE </span>'+m.subtitle.replace(/</g,'&lt;')+'</div>';if(m.keywords)html+='<div style="font-size:10px;color:#666;line-height:1.3"><span style="color:#444;font-size:9px">KEYWORDS </span>'+m.keywords.replace(/</g,'&lt;')+'</div>';if(m.notes)html+='<div style="font-size:10px;color:#C8A45C;margin-top:4px">'+m.notes.replace(/</g,'&lt;')+'</div>';html+='</div>'});html+='</div>'});el.innerHTML=html}
-
-// EXPORT
-function exportData(){var ev=getFiltered(),dl=ev.filter(function(e){return e.event==='download'}),pr=ev.filter(function(e){return e.event==='purchase'}),paid=pr.filter(function(e){return e.source!=='offerCode'}),codes=pr.filter(function(e){return e.source==='offerCode'});var rv=0;paid.forEach(function(e){rv+=toUSD(e.price,e.currency)});var co={};ev.forEach(function(e){var l=(e.locale||'??').toUpperCase();co[l]=(co[l]||0)+1});var dv={};ev.forEach(function(e){var d=e.device||'??';dv[d]=(dv[d]||0)+1});var bC={};paid.forEach(function(e){var c=e.currency||'USD';if(!bC[c])bC[c]={total:0,count:0};bC[c].total+=parseFloat(e.price||0);bC[c].count++});
-var report={exported:new Date().toISOString(),filter:{app:currentApp,time:currentTime},monthlyGoal:{target:getGoal(),current:getMonthlyRevenue(),month:new Date().toISOString().slice(0,7)},notes:allNotes,campaigns:allCampaigns,metadata:allMetadata,summary:{downloads:dl.length,purchases:pr.length,paid:paid.length,offerCodes:codes.length,revenueUSD:Math.round(rv*100)/100,proceedsUSD:Math.round(rv*0.85*100)/100,conversion:dl.length>0?Math.round(pr.length/dl.length*1000)/10+'%':'0%',arpu:dl.length>0?'$'+Math.round(rv/dl.length*100)/100:'$0'},countries:co,devices:dv,revenueByCurrency:bC,recentEvents:ev.slice(0,20).map(function(e){return{time:e.created_at,app:e.app,event:e.event,source:e.source||null,price:e.price||null,currency:e.currency||null,locale:e.locale,device:e.device}})};
-var t=JSON.stringify(report,null,2);navigator.clipboard.writeText(t).then(function(){showToast('Copied!','dl')}).catch(function(){var ta=document.createElement('textarea');ta.value=t;ta.style.position='fixed';ta.style.left='-9999px';document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);showToast('Copied!','dl')})}
-
-setInterval(function(){if(SK)loadData()},60000);
-setInterval(function(){loadFxRates()},3600000);
-init();
-</script>
-</body>
-</html>
+{
+  "cards": [
+    {
+      "id": "version_203",
+      "type": "announcement",
+      "titleTR": "Yula v2.0.3 Yayında!",
+      "titleEN": "Yula v2.0.3 is Live!",
+      "messageTR": "Günlük harcama takibi, düzenleme ve bildirim düzeltmesi eklendi.",
+      "messageEN": "Daily expense tracking, editing and notification fix added.",
+      "icon": "megaphone.fill",
+      "color": "blue",
+      "placement": "home",
+      "active": false
+    },
+    {
+      "type": "promo",
+      "titleTR": "⏰ Premium 1$ — Sınırlı Süre!",
+      "titleEN": "⏰ 1$ Premium — Limited Time!",
+      "messageTR": "Bu fırsat her an sona erebilir. Kod: 1LIFETIME",
+      "messageEN": "This offer could end anytime. Code: 1LIFETIME",
+      "code": "1LIFETIME",
+      "icon": "gift.fill",
+      "color": "yellow",
+      "placement": "home",
+      "active": false
+    },
+    {
+      "id": "crosspromo_personalcapsule",
+  "type": "link",
+  "titleTR": "Yeni Uygulamam PersonalCapsule — APPHOOKUP kodu ile 1$",
+  "titleEN": "My New App PersonalCapsule — $1 with code APPHOOKUP",
+  "messageTR": "Kararlarını mühürle, gelecekteki seninle buluş.",
+  "messageEN": "Seal your decisions, meet your future self.",
+  "url": "https://apps.apple.com/app/id6773064012",
+  "code": "APPHOOKUP",
+  "icon": "shippingbox.fill",
+  "color": "purple",
+  "placement": "home",
+  "active": true
+    },
+    {
+      "id": "review_yula",
+      "type": "link",
+      "titleTR": "Yula'yı beğendin mi?",
+      "titleEN": "Enjoying Yula?",
+      "messageTR": "1 dakikada büyümemize yardımcı ol",
+      "messageEN": "Help us grow with a quick review",
+      "url": "https://apps.apple.com/app/id6759402076?action=write-review",
+      "icon": "star.bubble.fill",
+      "color": "yellow",
+      "placement": "settings",
+      "active": false
+    },
+    {
+      "id": "tip_savings",
+      "type": "tip",
+      "titleTR": "Kaçırdığın tasarruf",
+      "titleEN": "The savings you're missing",
+      "messageTR": "Premium kullanıcılar ortalama ₺200/ay tasarruf keşfediyor. Sen hâlâ görmüyorsun.",
+      "messageEN": "Premium users discover $50/month in savings on average. You're still not seeing yours.",
+      "icon": "eye.trianglebadge.exclamationmark.fill",
+      "color": "red",
+      "placement": "home",
+      "active": false
+    },
+    {
+      "id": "contact_yula",
+      "type": "link",
+      "titleTR": "Reklam ve İşbirliği",
+      "titleEN": "Advertising & Partnership",
+      "messageTR": "Bizimle iletişime geç",
+      "messageEN": "Get in touch with us",
+      "url": "mailto:yula.app.destek@gmail.com",
+      "icon": "envelope.fill",
+      "color": "purple",
+      "placement": "settings",
+      "active": false
+    }
+  ]
+}
